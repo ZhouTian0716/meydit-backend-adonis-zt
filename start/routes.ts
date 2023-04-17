@@ -18,8 +18,21 @@
 |
 */
 
-import Route from '@ioc:Adonis/Core/Route'
+import Route from '@ioc:Adonis/Core/Route';
+
+import Database from '@ioc:Adonis/Lucid/Database';
 
 Route.get('/', async () => {
-  return { hello: 'world' }
-})
+  return { hello: 'world' };
+});
+
+Route.post('/register', async ({ request, response }) => {
+  const { email, password } = request.body();
+  console.log(email, password);
+  return response.redirect('/');
+});
+
+Route.get('/projects', async () => {
+  const projects = await Database.from('projects').select('*');
+  return { data: projects };
+});

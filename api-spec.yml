@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  title: Meydit API
+  description: 'Meydit API docs. Github repo can be found here [Repo](https://github.com/ZhouTian0716/meydit-backend-adonis-zt)'
+  version: 1.0.0
+  contact:
+    email: egglord0716@gmail.com
+    name: Zhou Tian
+paths:
+  /projects:
+    get:
+      description: Use this endpoint to fetch all projects
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: 'array'
+                items:
+                  $ref: '#/components/schemas/project'
+    post:
+      description: Use this endpoint to create project
+      requestBody:
+        description: Structure of a project
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/project'
+      responses:
+        '201':
+          description: project created successfully
+
+components:
+  schemas:
+    project:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+        slug:
+          type: string
+        created_at:
+          type: string
+          format: 'date-time'
+        updated_at:
+          type: string
+          format: 'date-time'

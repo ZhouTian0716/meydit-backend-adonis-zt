@@ -20,8 +20,6 @@
 
 import Route from '@ioc:Adonis/Core/Route';
 
-import Database from '@ioc:Adonis/Lucid/Database';
-
 Route.get('/', async () => {
   return { hello: 'world' };
 });
@@ -32,7 +30,5 @@ Route.post('/register', async ({ request, response }) => {
   return response.redirect('/');
 });
 
-Route.get('/projects', async () => {
-  const projects = await Database.from('projects').select('*');
-  return { data: projects };
-});
+// Route.resource('projects', 'ProjectsController').apiOnly();
+Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();

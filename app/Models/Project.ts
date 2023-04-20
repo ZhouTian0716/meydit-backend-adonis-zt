@@ -1,12 +1,10 @@
 import { DateTime } from 'luxon';
-import { BaseModel, beforeCreate, column } from '@ioc:Adonis/Lucid/Orm';
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
+import Account from './Account';
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
   public id: number;
-
-  @column()
-  public slug: string;
 
   @column()
   public title: string;
@@ -17,15 +15,15 @@ export default class Project extends BaseModel {
   @column()
   public image: string | null | undefined;
 
+  @column({ serializeAs: null })
+  public accountId: number;
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime;
 
-  @beforeCreate()
-  public static async createSlug(project: Project) {
-    // project.slug = project.$dirty.title
-    project.slug = Date.now().toString();
-  }
+  @belongsTo(() => Account)
+  public account: BelongsTo<typeof Account>;
 }

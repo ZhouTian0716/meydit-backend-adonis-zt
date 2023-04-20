@@ -56,15 +56,15 @@ components:
   schemas:
     project:
       type: object
-      required: ['id', 'owner_id', 'title', 'slug', 'created_at', 'updated_at']
+      required: ['id', 'account', 'title', 'created_at', 'updated_at']
       properties:
         id:
           type: number
           readOnly: true
-        owner_id:
+        account:
           type: number
           allOf:
-            - $ref: '#/components/schemas/account/properties/id'
+            - $ref: '#/components/schemas/account'
             - readOnly: true
         title:
           type: string
@@ -72,9 +72,6 @@ components:
           type: string
           nullable: true
         image:
-          type: string
-          nullable: true
-        slug:
           type: string
           nullable: true
         created_at:

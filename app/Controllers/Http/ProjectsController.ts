@@ -3,16 +3,15 @@ import Project from 'App/Models/Project';
 import CreateProjectValidator from 'App/Validators/CreateProjectValidator';
 
 export default class ProjectsController {
-  public async index({ response }: HttpContextContract) {
+  public async index({ request,response }: HttpContextContract) {
     try {
       // const projects = await Project.all();
       // pagination
-      // const projects = await Project.query().paginate(1,20)
-      // response.status(200);
-      return {
-        meta:{},
-        data:[]
-      };
+      const page = 1;
+      const perPage = request.input('per_page') || 20;
+      const projects = await Project.query().paginate(page, perPage);
+      response.status(200);
+      return projects;
     } catch (error) {
       return error;
       //   return response.badRequest(error.messages);
@@ -30,57 +29,40 @@ export default class ProjectsController {
     }
   }
 
-  public async show({ params }: HttpContextContract) {
-    try {
-      const { slug } = params;
-      const project = await Project.findBy('slug', slug);
-      return project;
-    } catch (error) {
-      console.log('error.message');
-      return error;
-    }
-  }
+  // public async show({ params }: HttpContextContract) {
+  //   try {
+  //     const { slug } = params;
+  //     const project = await Project.findBy('slug', slug);
+  //     return project;
+  //   } catch (error) {
+  //     console.log('error.message');
+  //     return error;
+  //   }
+  // }
 
   // ZT NOTE: This is not ready yet
-  public async update({ request, response, params }: HttpContextContract) {
-    try {
-      const { slug } = params;
-      const payload = await request.validate(CreateProjectValidator);
-      console.log(payload);
-      await Project.query().where('slug', slug).update(payload);
-      response.status(204);
-    } catch (error) {
-      return error;
-    }
-  }
+  // public async update({ request, response, params }: HttpContextContract) {
+  //   try {
+  //     const { slug } = params;
+  //     const payload = await request.validate(CreateProjectValidator);
+  //     console.log(payload);
+  //     await Project.query().where('slug', slug).update(payload);
+  //     response.status(204);
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // }
 
-  public async destroy({ response, params }: HttpContextContract) {
-    try {
-      const { slug } = params;
-      const project = await Project.findBy('slug', slug);
-      if (project) {
-        await project.delete();
-      }
-      response.status(200);
-    } catch (error) {
-      return error;
-    }
-  }
+  // public async destroy({ response, params }: HttpContextContract) {
+  //   try {
+  //     const { slug } = params;
+  //     const project = await Project.findBy('slug', slug);
+  //     if (project) {
+  //       await project.delete();
+  //     }
+  //     response.status(200);
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // }
 }
-
-// import Database from '@ioc:Adonis/Lucid/Database';
-
-// public async store({ request, response }: HttpContextContract) {
-//   try {
-//     const payload = await request.validate(CreateProjectValidator);
-//     const res = await Database.table('projects').insert({
-//       ...payload,
-//       // slug: `${payload.title.replace(' ', '-')}-${Date.now()}`,
-//       slug: Date.now(),
-//     });
-//     response.status(201);
-//     return res;
-//   } catch (error) {
-//     return error;
-//   }
-// }

@@ -41,7 +41,7 @@ export const plugins: Config['plugins'] = [
 | of tests on the terminal.
 |
 */
-export const reporters: Required<Config>['reporters'] = [specReporter()];
+export const reporters: Config['reporters'] = [specReporter()];
 
 /*
 |--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ export const runnerHooks: Pick<Required<Config>, 'setup' | 'teardown'> = {
 | You can use this method to configure suites. For example: Only start
 | the HTTP server when it is a functional suite.
 */
-export const configureSuite: Required<Config>['configureSuite'] = (suite) => {
+export const configureSuite: Config['configureSuite'] = (suite) => {
   if (suite.name === 'functional') {
     suite.setup(() => TestUtils.httpServer().start());
   }

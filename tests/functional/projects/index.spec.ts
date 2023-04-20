@@ -5,6 +5,7 @@ test.group('Projects index', () => {
     const response = await client.get('/projects');
     response.assertStatus(200);
     // console.log(response.body());
+    // response.assertBodyContains({message:'hello world'})
     response.assertAgainstApiSpec()
   });
 });

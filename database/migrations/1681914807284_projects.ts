@@ -10,14 +10,13 @@ export default class extends BaseSchema {
       table.string('title', 255).notNullable();
       table.string('image');
       table.text('description');
-      // table.integer('owner_id').notNullable().unsigned().references('id').inTable('accounts');
-      
+      table.integer('owner_id').notNullable().unsigned().references('id').inTable('accounts');
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
-      table.timestamp('created_at', { useTz: true });
-      table.timestamp('updated_at', { useTz: true });
+      table.timestamp('created_at', { useTz: true }).notNullable();
+      table.timestamp('updated_at', { useTz: true }).notNullable();
     });
   }
 

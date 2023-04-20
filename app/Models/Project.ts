@@ -6,13 +6,13 @@ export default class Project extends BaseModel {
   public id: number;
 
   @column()
-  public title: string;
-
-  @column()
   public slug: string;
 
   @column()
-  public description: string;
+  public title: string;
+
+  @column()
+  public description: string | null | undefined;
 
   @column()
   public image: string | null | undefined;

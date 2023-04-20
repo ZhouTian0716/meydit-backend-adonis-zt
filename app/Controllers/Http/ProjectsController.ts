@@ -1,14 +1,18 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
-
 import Project from 'App/Models/Project';
 import CreateProjectValidator from 'App/Validators/CreateProjectValidator';
 
 export default class ProjectsController {
   public async index({ response }: HttpContextContract) {
     try {
-      const projects = await Project.all();
-      response.status(200);
-      return [];
+      // const projects = await Project.all();
+      // pagination
+      // const projects = await Project.query().paginate(1,20)
+      // response.status(200);
+      return {
+        meta:{},
+        data:[]
+      };
     } catch (error) {
       return error;
       //   return response.badRequest(error.messages);
@@ -18,7 +22,7 @@ export default class ProjectsController {
   public async store({ request, response }: HttpContextContract) {
     try {
       const payload = await request.validate(CreateProjectValidator);
-      const project = await Project.create(payload); 
+      const project = await Project.create(payload);
       response.status(201);
       return project;
     } catch (error) {
@@ -43,7 +47,7 @@ export default class ProjectsController {
       const { slug } = params;
       const payload = await request.validate(CreateProjectValidator);
       console.log(payload);
-      await Project.query().where('slug',slug).update(payload)
+      await Project.query().where('slug', slug).update(payload);
       response.status(204);
     } catch (error) {
       return error;
@@ -63,7 +67,6 @@ export default class ProjectsController {
     }
   }
 }
-
 
 // import Database from '@ioc:Adonis/Lucid/Database';
 

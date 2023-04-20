@@ -56,7 +56,9 @@ export const reporters: Config['reporters'] = [specReporter()];
 |
 */
 export const runnerHooks: Pick<Required<Config>, 'setup' | 'teardown'> = {
-  setup: [() => TestUtils.ace().loadCommands()],
+  // ZT-NOTE: This is where we can load the commands and run migrations
+  // () => TestUtils.db().migrate()
+  setup: [() => TestUtils.ace().loadCommands(), () => TestUtils.db().migrate()],
   teardown: [],
 };
 

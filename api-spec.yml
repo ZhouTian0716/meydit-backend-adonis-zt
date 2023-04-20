@@ -62,7 +62,6 @@ components:
           type: number
           readOnly: true
         account:
-          type: number
           allOf:
             - $ref: '#/components/schemas/account'
             - readOnly: true

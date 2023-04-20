@@ -22,8 +22,8 @@ export default class Account extends BaseModel {
   @column()
   public role: string
 
-  @column()
-  public rememberMeToken: string | null
+  @column({ serializeAs: null })
+  public rememberMeToken?: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

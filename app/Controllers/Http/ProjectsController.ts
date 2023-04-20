@@ -9,7 +9,7 @@ export default class ProjectsController {
       // pagination
       const page = 1;
       const perPage = request.input('per_page') || 20;
-      const projects = await Project.query().paginate(page, perPage);
+      const projects = await Project.query().preload('account').orderBy('id', 'desc').paginate(page, perPage)
       response.status(200);
       return projects;
     } catch (error) {

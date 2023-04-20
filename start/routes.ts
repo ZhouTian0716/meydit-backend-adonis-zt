@@ -31,4 +31,7 @@ Route.post('/register', async ({ request, response }) => {
 });
 
 // Route.resource('projects', 'ProjectsController').apiOnly();
-Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();
+Route.resource('projects', 'ProjectsController')
+  .middleware({ store: ['auth'] })
+  .paramFor('projects', 'slug')
+  .apiOnly();

@@ -31,4 +31,11 @@ test.group('Projects index', (group) => {
       projects.map((row) => row.toJSON())
     );
   });
+
+  test('define custom per page result set', async ({ client }) => {
+    await AccountFactory.query().with('projects', 40).create();
+    const response = await client.get('/projects').qs({ per_page: 40 });
+    response.assertAgainstApiSpec();
+    response.assertBodyContains({ meta: { total: 40, per_page: 40, current_page: 1 } });
+  });
 });

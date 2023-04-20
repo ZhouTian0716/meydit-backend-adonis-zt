@@ -1,0 +1,15 @@
+
+1. Create test
+node ace make:test functional projects/store
+
+2. auth middle ware
+lecture 50:52
+https://www.youtube.com/watch?v=PE0Jmu8Qqjo&t=3052s&ab_channel=AmanVirk
+
+if using session auth
+npm i @adonisjs/session
+
+node ace configure @adonisjs/session
+
+3. file upload
+lecture 58:09

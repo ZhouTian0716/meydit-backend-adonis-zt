@@ -1,15 +1,19 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import Project from 'App/Models/Project';
-import CreateProjectValidator from 'App/Validators/CreateProjectValidator';
+import { schema, rules } from '@ioc:Adonis/Core/Validator';
+// import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 
 export default class ProjectsController {
-  public async index({ request,response }: HttpContextContract) {
+  public async index({ request, response }: HttpContextContract) {
     try {
       // const projects = await Project.all();
       // pagination
       const page = 1;
       const perPage = request.input('per_page') || 20;
-      const projects = await Project.query().preload('account').orderBy('id', 'desc').paginate(page, perPage)
+      const projects = await Project.query()
+        .preload('account')
+        .orderBy('id', 'desc')
+        .paginate(page, perPage);
       response.status(200);
       return projects;
     } catch (error) {
@@ -18,12 +22,25 @@ export default class ProjectsController {
     }
   }
 
-  public async store({ request, response }: HttpContextContract) {
+  public async store({ request, response, auth }: HttpContextContract) {
     try {
-      const payload = await request.validate(CreateProjectValidator);
-      const project = await Project.create(payload);
-      response.status(201);
-      return project;
+      const { title, description } = await request.validate({
+        schema: schema.create({
+          title: schema.string([rules.trim(), rules.escape()]),
+          description: schema.string([rules.trim()]),
+        }),
+      });
+
+      const project = await auth.user!.related('projects').create({
+        title,
+        description,
+      });
+
+      project.$setRelated('account', auth.user!);
+
+      response.created({
+        data: project,
+      });
     } catch (error) {
       return error;
     }

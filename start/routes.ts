@@ -24,14 +24,11 @@ Route.get('/', async () => {
   return { hello: 'world' };
 });
 
-Route.post('/register', async ({ request, response }) => {
-  const { email, password } = request.body();
-  console.log(email, password);
-  return response.redirect('/');
-});
+// Route.post('/register', async ({ request, response }) => {
+//   const { email, password } = request.body();
+//   console.log(email, password);
+//   return response.redirect('/');
+// });
 
-// Route.resource('projects', 'ProjectsController').apiOnly();
-Route.resource('projects', 'ProjectsController')
-  .middleware({ store: ['auth'] })
-  .paramFor('projects', 'slug')
-  .apiOnly();
+// Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();
+Route.resource('projects', 'ProjectsController').middleware({ store: ['auth'] });

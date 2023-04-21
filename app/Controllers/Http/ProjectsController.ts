@@ -23,7 +23,6 @@ export default class ProjectsController {
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
-    try {
       const { title, description } = await request.validate({
         schema: schema.create({
           title: schema.string([rules.trim(), rules.escape()]),
@@ -41,9 +40,7 @@ export default class ProjectsController {
       response.created({
         data: project,
       });
-    } catch (error) {
-      return error;
-    }
+    } 
   }
 
   // public async show({ params }: HttpContextContract) {

@@ -180,7 +180,7 @@ components:
       required: ['title']
       properties:
         title:
-          $ref: '#/components/schemas/project/properties/title'
+          type: string
 
   requestBodies:
     create_project:

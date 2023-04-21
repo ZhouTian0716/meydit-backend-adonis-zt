@@ -11,5 +11,11 @@ npm i @adonisjs/session
 
 node ace configure @adonisjs/session
 
-3. file upload
+3. file upload (learn this LATER)
 lecture 58:09
+
+LEARN THIS DRIVE ON DOC TO SETUP WITH AWS S3 LATER
+模拟上传测试
+import Drive from '@ioc:Adonis/Core/Drive'
+
+4.

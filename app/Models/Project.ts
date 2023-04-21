@@ -10,10 +10,10 @@ export default class Project extends BaseModel {
   public title: string;
 
   @column()
-  public description: string | null | undefined;
+  public description: string | null ;
 
   @column()
-  public image: string | null | undefined;
+  public image: string | null ;
 
   @column({ serializeAs: null })
   public accountId: number;

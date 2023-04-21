@@ -23,24 +23,21 @@ export default class ProjectsController {
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
-      const { title, description } = await request.validate({
-        schema: schema.create({
-          title: schema.string([rules.trim(), rules.escape()]),
-          description: schema.string([rules.trim()]),
-        }),
-      });
+    const payload = await request.validate({
+      schema: schema.create({
+        title: schema.string([rules.trim(), rules.escape()]),
+        description: schema.string([rules.trim()]),
+        image: schema.string([rules.trim()]),
+      }),
+    });
 
-      const project = await auth.user!.related('projects').create({
-        title,
-        description,
-      });
+    const project = await auth.user!.related('projects').create({ ...payload });
 
-      project.$setRelated('account', auth.user!);
+    project.$setRelated('account', auth.user!);
 
-      response.created({
-        data: project,
-      });
-    } 
+    response.created({
+      data: project,
+    });
   }
 
   // public async show({ params }: HttpContextContract) {

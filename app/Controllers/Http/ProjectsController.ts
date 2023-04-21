@@ -40,16 +40,13 @@ export default class ProjectsController {
     });
   }
 
-  // public async show({ params }: HttpContextContract) {
-  //   try {
-  //     const { slug } = params;
-  //     const project = await Project.findBy('slug', slug);
-  //     return project;
-  //   } catch (error) {
-  //     console.log('error.message');
-  //     return error;
-  //   }
-  // }
+  public async show({ request }: HttpContextContract) {
+    const project = await Project.findOrFail(request.param('id'));
+    await project.load('account');
+    return {
+      data: project,
+    };
+  }
 
   // ZT NOTE: This is not ready yet
   // public async update({ request, response, params }: HttpContextContract) {

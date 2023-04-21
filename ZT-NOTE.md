@@ -18,4 +18,5 @@ LEARN THIS DRIVE ON DOC TO SETUP WITH AWS S3 LATER
 模拟上传测试
 import Drive from '@ioc:Adonis/Core/Drive'
 
-4.
+4. project show route
+exception handler

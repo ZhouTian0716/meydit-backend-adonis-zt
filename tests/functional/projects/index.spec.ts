@@ -5,8 +5,6 @@ import { AccountFactory } from 'Database/factories';
 
 test.group('Projects index', (group) => {
   group.each.setup(async () => {
-    // Begin a new transaction for each test
-    // End of test will rollback the transaction
     await Database.beginGlobalTransaction();
     return () => Database.rollbackGlobalTransaction();
   });

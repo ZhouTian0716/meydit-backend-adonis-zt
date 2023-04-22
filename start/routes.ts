@@ -24,11 +24,12 @@ Route.get('/', async () => {
   return { hello: 'world' };
 });
 
-Route.resource('/accounts', 'AccountsController').apiOnly();
-
-// Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();
-Route.resource('projects', 'ProjectsController').middleware({ store: ['auth'] });
-
-// Route.post('/auth/register', 'AuthController.register').as('auth.register')
-Route.post('/auth/login', 'AuthController.login').as('auth.login');
-Route.get('/auth/logout', 'AuthController.logout').as('auth.logout');
+Route.group(() => {
+  Route.resource('/accounts', 'AccountsController').apiOnly();
+  // Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();
+  Route.resource('projects', 'ProjectsController')
+    .middleware({ store: ['auth'], update: ['auth'], destroy: ['auth'] })
+    .apiOnly();
+  Route.post('/auth/login', 'AuthController.login').as('auth.login');
+  Route.get('/auth/logout', 'AuthController.logout').as('auth.logout');
+}).prefix('api');

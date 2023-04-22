@@ -6,6 +6,7 @@ export const ProjectFactory = Factory.define(Project, ({ faker }) => {
   return {
     title: faker.lorem.words(5),
     description: faker.lorem.paragraph(3),
+    status: 'released',
     // slug:faker.lorem.words(3)
   };
 })

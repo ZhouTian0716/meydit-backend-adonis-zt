@@ -8,10 +8,10 @@ export default class Account extends BaseModel {
   public id: number
 
   @column()
-  public first_name: string
+  public first_name: string | null | undefined
 
   @column()
-  public last_name: string
+  public last_name: string | null | undefined
 
   @column()
   public email: string

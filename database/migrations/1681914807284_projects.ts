@@ -6,10 +6,12 @@ export default class extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id');
-      // table.string('slug').notNullable().unique();
-      table.string('title', 255).notNullable();
+      table.string('title', 100).notNullable();
+      table.string('slug').notNullable().unique();
       table.string('image');
       table.text('description');
+      table.enu('status', ['Released', 'In Progress', 'Completed']).notNullable();
+      table.integer('maker_id').nullable().unsigned().references('id').inTable('accounts');
       table.integer('account_id').notNullable().unsigned().references('id').inTable('accounts');
 
       /**

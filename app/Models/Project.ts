@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
+import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import Account from './Account';
 
 export default class Project extends BaseModel {
@@ -10,10 +11,24 @@ export default class Project extends BaseModel {
   public title: string;
 
   @column()
+  @slugify({
+    strategy: 'dbIncrement',
+    fields: ['title'],
+    allowUpdates: false,
+  })
+  public slug: string
+
+  @column()
   public description: string | null ;
 
   @column()
   public image: string | null ;
+
+  @column()
+  public status: string
+
+  @column({ serializeAs: null })
+  public makerId: number;
 
   @column({ serializeAs: null })
   public accountId: number;

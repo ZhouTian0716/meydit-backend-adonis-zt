@@ -12,13 +12,13 @@ export default class CreateAccountValidator {
     ]),
     password: schema.string({ trim: true }, [rules.confirmed(), rules.minLength(4), rules.maxLength(50)]),
     role: schema.enum(['client', 'maker', 'admin'] as const),
-    first_name: schema.string.optional({ trim: true }, [
+    first_name: schema.string.nullableAndOptional({ trim: true }, [
       rules.alpha({
         allow: ['space', 'underscore', 'dash'],
       }),
       rules.minLength(2),
     ]),
-    last_name: schema.string.optional({ trim: true }, [
+    last_name: schema.string.nullableAndOptional({ trim: true }, [
       rules.alpha({
         allow: ['space', 'underscore', 'dash'],
       }),

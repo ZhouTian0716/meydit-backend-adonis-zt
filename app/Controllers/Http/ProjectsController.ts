@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import Project from 'App/Models/Project';
-import { schema, rules } from '@ioc:Adonis/Core/Validator';
 import CreateProjectValidator from 'App/Validators/Project/CreateProjectValidator';
+import UpdateProjectValidator from 'App/Validators/Project/UpdateProjectValidator';
 // import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 
 export default class ProjectsController {
@@ -9,7 +9,6 @@ export default class ProjectsController {
     try {
       // const projects = await Project.all();
       // pagination
-
       const page = 1;
       const perPage = request.input('per_page') || 20;
       // ZT-NOTE: The preload('account') here, 'account' need to match the relation field defined in the Project model
@@ -17,8 +16,7 @@ export default class ProjectsController {
         .preload('account')
         .orderBy('id', 'desc')
         .paginate(page, perPage);
-      response.status(200);
-      return projects;
+      return response.status(200).json(projects);
     } catch (error) {
       return error;
       // return response.badRequest(error.messages);
@@ -35,8 +33,7 @@ export default class ProjectsController {
     }
 
     const payload = await request.validate(CreateProjectValidator);
-
-    const project = await auth.user!.related('projects').create({ ...payload });
+    const project = await auth.user!.related('projects').create({ ...payload, status: 'Released' });
 
     project.$setRelated('account', auth.user!);
 
@@ -45,37 +42,41 @@ export default class ProjectsController {
     });
   }
 
-  public async show({ request }: HttpContextContract) {
-    const project = await Project.findOrFail(request.param('id'));
-    await project.load('account');
-    return {
-      data: project,
-    };
+  public async show({ response, params }: HttpContextContract) {
+    try {
+      const { id } = params;
+      const project = await Project.query().preload('account').where('slug', id);
+      if (project) {
+        return response.json(project);
+      }
+      return response.status(404).json({ message: 'Project not found' });
+    } catch (error) {
+      return error;
+    }
   }
 
-  // ZT NOTE: This is not ready yet
-  // public async update({ request, response, params }: HttpContextContract) {
-  //   try {
-  //     const { slug } = params;
-  //     const payload = await request.validate(CreateProjectValidator);
-  //     console.log(payload);
-  //     await Project.query().where('slug', slug).update(payload);
-  //     response.status(204);
-  //   } catch (error) {
-  //     return error;
-  //   }
-  // }
+  public async update({ request, response, params }: HttpContextContract) {
+    try {
+      const { id } = params;
+      const payload = await request.validate(UpdateProjectValidator);
+      // console.log(payload);
+      await Project.query().where('slug', id).update(payload);
+      return response.status(204);
+    } catch (error) {
+      return error;
+    }
+  }
 
-  // public async destroy({ response, params }: HttpContextContract) {
-  //   try {
-  //     const { slug } = params;
-  //     const project = await Project.findBy('slug', slug);
-  //     if (project) {
-  //       await project.delete();
-  //     }
-  //     response.status(200);
-  //   } catch (error) {
-  //     return error;
-  //   }
-  // }
+  public async destroy({ response, params }: HttpContextContract) {
+    try {
+      const { id } = params;
+      const project = await Project.findBy('slug', id);
+      if (project) {
+        await project.delete();
+      }
+      response.status(200);
+    } catch (error) {
+      return error;
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import Project from 'App/Models/Project';
 import { schema, rules } from '@ioc:Adonis/Core/Validator';
+import CreateProjectValidator from 'App/Validators/Project/CreateProjectValidator';
 // import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 
 export default class ProjectsController {
@@ -8,8 +9,10 @@ export default class ProjectsController {
     try {
       // const projects = await Project.all();
       // pagination
+
       const page = 1;
       const perPage = request.input('per_page') || 20;
+      // ZT-NOTE: The preload('account') here, 'account' need to match the relation field defined in the Project model
       const projects = await Project.query()
         .preload('account')
         .orderBy('id', 'desc')
@@ -18,18 +21,20 @@ export default class ProjectsController {
       return projects;
     } catch (error) {
       return error;
-      //   return response.badRequest(error.messages);
+      // return response.badRequest(error.messages);
     }
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
-    const payload = await request.validate({
-      schema: schema.create({
-        title: schema.string([rules.trim(), rules.escape()]),
-        description: schema.string([rules.trim()]),
-        image: schema.string([rules.trim()]),
-      }),
-    });
+    const isClient = auth.user?.$original.role === 'client';
+
+    if (!isClient) {
+      return response.unauthorized({
+        errors: [{ message: 'Only client can create project' }],
+      });
+    }
+
+    const payload = await request.validate(CreateProjectValidator);
 
     const project = await auth.user!.related('projects').create({ ...payload });
 

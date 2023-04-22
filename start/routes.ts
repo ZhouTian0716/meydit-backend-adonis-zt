@@ -28,7 +28,7 @@ Route.group(() => {
   Route.resource('/accounts', 'AccountsController').apiOnly();
   // Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();
   Route.resource('projects', 'ProjectsController')
-    .middleware({ store: ['auth'], update: ['auth'], destroy: ['auth'] })
+    .middleware({ index: ['auth'], store: ['auth'], update: ['auth'], destroy: ['auth'] })
     .apiOnly();
   Route.post('/auth/login', 'AuthController.login').as('auth.login');
   Route.get('/auth/logout', 'AuthController.logout').as('auth.logout');

@@ -21,7 +21,6 @@
     "./providers/AppProvider",
     "@adonisjs/core",
     "@adonisjs/lucid",
-    "@adonisjs/session",
     "@adonisjs/auth",
     "@adonisjs/lucid-slugify"
   ],

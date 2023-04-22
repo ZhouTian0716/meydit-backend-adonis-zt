@@ -20,3 +20,5 @@ import Drive from '@ioc:Adonis/Core/Drive'
 
 4. project show route
 exception handler
+
+5. serializeAs null in model usage example

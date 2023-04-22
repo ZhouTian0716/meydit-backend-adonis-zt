@@ -11,8 +11,8 @@ export default class extends BaseSchema {
       table.string('image');
       table.text('description');
       table.enu('status', ['Released', 'In Progress', 'Completed']).notNullable();
-      table.integer('maker_id').nullable().unsigned().references('id').inTable('accounts');
-      table.integer('account_id').notNullable().unsigned().references('id').inTable('accounts');
+      table.integer('maker_id').nullable().unsigned().references('id').inTable('accounts').onDelete('CASCADE');
+      table.integer('account_id').notNullable().unsigned().references('id').inTable('accounts').onDelete('CASCADE');
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

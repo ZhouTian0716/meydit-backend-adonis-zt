@@ -17,7 +17,7 @@ export default class AccountsController {
 
   public async store({ request, response }: HttpContextContract) {
     const payload = await request.validate(CreateAccountValidator);
-    const res = await Account.create(payload);
+    const res = await Account.create({...payload});
     response.status(201);
     return res;
   }

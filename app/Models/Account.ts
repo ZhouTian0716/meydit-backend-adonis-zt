@@ -16,6 +16,7 @@ export default class Account extends BaseModel {
   @column()
   public email: string
 
+  // ZT-NOTE: { serializeAs: null } helps not returning sensitive data
   @column({ serializeAs: null })
   public password: string
 

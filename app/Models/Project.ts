@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
-import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
+import { slugify } from '@ioc:Adonis/Addons/LucidSlugify';
 import Account from './Account';
 
 export default class Project extends BaseModel {
@@ -16,16 +16,16 @@ export default class Project extends BaseModel {
     fields: ['title'],
     allowUpdates: false,
   })
-  public slug: string
+  public slug: string;
 
   @column()
-  public description: string | null ;
+  public description: string | null;
 
   @column()
-  public image: string | null ;
+  public image: string | null;
 
   @column()
-  public status: string
+  public status: string;
 
   @column({ serializeAs: null })
   public makerId: number;
@@ -33,6 +33,8 @@ export default class Project extends BaseModel {
   @column({ serializeAs: null })
   public accountId: number;
 
+  // ZT-NOTE: format can be change
+  // { autoCreate: true, serialize: (value: DateTime) => value.toFormat('dd LLL yyyy'),}
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 
@@ -41,4 +43,7 @@ export default class Project extends BaseModel {
 
   @belongsTo(() => Account)
   public account: BelongsTo<typeof Account>;
+
+  // ZT-NOTE: computed feature
+  // Adding a computed property to the return object for this model
 }

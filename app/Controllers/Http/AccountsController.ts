@@ -8,8 +8,8 @@ export default class AccountsController {
   public async index({ response }: HttpContextContract) {
     try {
       const accounts = await Account.all();
-      response.status(200);
-      return accounts;
+      // const res = accounts.map((project) => project.serialize({ fields: ['id', 'email'] }));
+      return response.status(200).json(accounts);
     } catch (error) {
       return error;
     }
@@ -17,7 +17,7 @@ export default class AccountsController {
 
   public async store({ request, response }: HttpContextContract) {
     const payload = await request.validate(CreateAccountValidator);
-    const res = await Account.create({...payload});
+    const res = await Account.create({ ...payload });
     response.status(201);
     return res;
   }

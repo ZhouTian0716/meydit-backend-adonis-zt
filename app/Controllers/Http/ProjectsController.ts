@@ -7,15 +7,18 @@ import UpdateProjectValidator from 'App/Validators/Project/UpdateProjectValidato
 export default class ProjectsController {
   public async index({ request, response }: HttpContextContract) {
     try {
-      // const projects = await Project.all();
       // pagination
-      const page = 1;
-      const perPage = request.input('per_page') || 20;
+      const page = request.input('page') || 1;
+      const perPage = request.input('per_page') || 3;
       // ZT-NOTE: The preload('account') here, 'account' need to match the relation field defined in the Project model
       const projects = await Project.query()
         .preload('account')
         .orderBy('id', 'desc')
         .paginate(page, perPage);
+      // ZT-NOTE: way to serialize the data  
+      // const projectsSerialized = projects.serialize({
+      //   fields: ['title', 'id','image'],
+      // });
       return response.status(200).json(projects);
     } catch (error) {
       return error;

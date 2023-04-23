@@ -22,3 +22,8 @@ import Drive from '@ioc:Adonis/Core/Drive'
 exception handler
 
 5. serializeAs null in model usage example
+
+6. tech debts
+-- need to manully delete token from sql table, once token expires, but logout will do it, in case of forgotting logout, than you lost the access token (at header, client side won't be able to logout again, need to go database delete)
+
+--

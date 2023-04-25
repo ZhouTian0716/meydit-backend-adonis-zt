@@ -20,19 +20,16 @@
 
 import Route from '@ioc:Adonis/Core/Route';
 
-import Database from '@ioc:Adonis/Lucid/Database';
-
 Route.get('/', async () => {
   return { hello: 'world' };
 });
 
-Route.post('/register', async ({ request, response }) => {
-  const { email, password } = request.body();
-  console.log(email, password);
-  return response.redirect('/');
-});
-
-Route.get('/projects', async () => {
-  const projects = await Database.from('projects').select('*');
-  return { data: projects };
-});
+Route.group(() => {
+  Route.resource('/accounts', 'AccountsController').apiOnly();
+  // Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();
+  Route.resource('projects', 'ProjectsController')
+    .middleware({ store: ['auth'], update: ['auth'], destroy: ['auth'] })
+    .apiOnly();
+  Route.post('/auth/login', 'AuthController.login').as('auth.login');
+  Route.post('/auth/logout', 'AuthController.logout').as('auth.logout');
+}).prefix('api');

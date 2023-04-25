@@ -1,0 +1,267 @@
+openapi: 3.0.0
+info:
+  description: 'BY ZHOU TIAN'
+  version: 0.1.0
+  title: MEYDIT API
+tags:
+  - name: 'Projects'
+
+paths:
+  /projects:
+    get:
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: number
+        - in: query
+          name: per_page
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/projects'
+    post:
+      tags:
+        - Projects
+      requestBody:
+        $ref: '#/components/requestBodies/create_project'
+      responses:
+        '201':
+          $ref: '#/components/responses/project'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '422':
+          $ref: '#/components/responses/validation_error'
+
+  /projects/{slug}:
+    parameters:
+      - in: path
+        name: slug
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Projects
+      responses:
+        '200':
+          $ref: '#/components/responses/project'
+        '404':
+          $ref: '#/components/responses/resource_not_found'
+
+components:
+  schemas:
+    project:
+      type: object
+      required: ['id', 'account', 'title', 'created_at', 'updated_at']
+      properties:
+        id:
+          type: number
+          readOnly: true
+        account:
+          allOf:
+            - $ref: '#/components/schemas/account'
+            - readOnly: true
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        image:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      additionalProperties: false
+
+    account:
+      type: object
+      required: ['id', 'email', 'role', 'created_at', 'updated_at']
+      properties:
+        id:
+          type: number
+          readOnly: true
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        role:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      additionalProperties: false
+
+    error:
+      type: object
+      required: ['message']
+      properties:
+        message:
+          type: string
+      additionalProperties: false
+
+    validation_error:
+      type: object
+      required: ['message', 'field', 'rule']
+      properties:
+        message:
+          type: string
+        field:
+          type: string
+        rule:
+          type: string
+        args:
+          oneOf:
+            - type: object
+            - type: array
+      additionalProperties: false
+
+    pagination_meta:
+      type: object
+      required:
+        [
+          'total',
+          'per_page',
+          'current_page',
+          'last_page',
+          'first_page',
+          'first_page_url',
+          'last_page_url',
+          'next_page_url',
+          'previous_page_url',
+        ]
+      properties:
+        total:
+          type: number
+        per_page:
+          type: number
+        current_page:
+          type: number
+        last_page:
+          type: number
+        first_page:
+          type: number
+        first_page_url:
+          type: string
+        last_page_url:
+          type: string
+        next_page_url:
+          type: string
+          nullable: true
+        previous_page_url:
+          type: string
+          nullable: true
+      additionalProperties: false
+
+    project_payload:
+      type: object
+      required: ['title']
+      properties:
+        title:
+          type: string
+
+  requestBodies:
+    create_project:
+      description: 'Create new a project'
+      content:
+        multipart/form-data:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/project_payload'
+              - type: object
+                required: ['title']
+
+  responses:
+    resource_not_found:
+      description: 'Resource not found'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: ['errors']
+            properties:
+              errors:
+                type: array
+                minItems: 1
+                items:
+                  $ref: '#/components/schemas/error'
+            additionalProperties: false
+
+    unauthorized:
+      description: 'User not logged in'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: ['errors']
+            properties:
+              errors:
+                type: array
+                minItems: 1
+                items:
+                  $ref: '#/components/schemas/error'
+            additionalProperties: false
+
+    validation_error:
+      description: 'Invalid user input'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                minItems: 1
+                items:
+                  $ref: '#/components/schemas/validation_error'
+            additionalProperties: false
+
+    project:
+      description: 'Project'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: ['data']
+            properties:
+              data:
+                $ref: '#/components/schemas/project'
+            additionalProperties: false
+
+    projects:
+      description: 'Projects List'
+      content:
+        application/json:
+          schema:
+            type: object
+            required: ['data', 'meta']
+            properties:
+              meta:
+                $ref: '#/components/schemas/pagination_meta'
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/project'
+            additionalProperties: false

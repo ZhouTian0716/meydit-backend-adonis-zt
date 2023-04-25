@@ -4,6 +4,7 @@ import Hash from '@ioc:Adonis/Core/Hash';
 import CreateAccountValidator from 'App/Validators/Account/CreateAccountValidator';
 import UpdateAccountValidator from 'App/Validators/Account/UpdateAccountValidator';
 
+
 export default class AccountsController {
   public async index({ response }: HttpContextContract) {
     try {
@@ -16,10 +17,17 @@ export default class AccountsController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    const payload = await request.validate(CreateAccountValidator);
-    const res = await Account.create({ ...payload });
-    response.status(201);
-    return res;
+    // ZT-NOTE: if the validation fail, try catch here will go catch block,
+    // will get the error object
+    try {
+      const payload = await request.validate(CreateAccountValidator);
+      const res = await Account.create({ ...payload });
+      response.status(201);
+      return res;
+    } catch (error:any) {
+      // ZT-NOTE: pass deeper for frontend to handle
+      response.badRequest(error.messages.errors);
+    }
   }
 
   public async show({ response, params }: HttpContextContract) {

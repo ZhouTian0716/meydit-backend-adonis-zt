@@ -27,3 +27,5 @@ export default class UpdateAccountValidator {
 
   public messages: CustomMessages = {};
 }
+
+// ZT-NOTE: nullableAndOptional() is the suggested use case for patch request

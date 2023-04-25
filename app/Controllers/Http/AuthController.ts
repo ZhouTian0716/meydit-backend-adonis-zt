@@ -8,13 +8,15 @@ export default class AuthController {
     try {
       const account = await Account.query().where('email', email).first();
       if (!account) {
-        throw new Error('Account not found');
+        return response.status(404).json({ message: 'Account not found' });
       }
       const accountSerialized = account.serialize({
         fields: ['first_name', 'last_name', 'role', 'email'],
       });
+
+      // If this attempt check fail, it will throw error
       const token = await auth.use('api').attempt(email, password, {
-        expiresIn: '15 min',
+        expiresIn: '1 day',
       });
       const loginRes = {
         account: accountSerialized,
@@ -23,14 +25,18 @@ export default class AuthController {
       // The expiresIn, think about adding feature to refresh token
       return loginRes;
     } catch {
-      return response.unauthorized('Invalid credentials');
+      response.unauthorized({ message: 'Invalid credentials' });
     }
   }
 
-  public async logout({ auth }: HttpContextContract) {
+  public async logout({ request, response, auth }: HttpContextContract) {
+    // Validate if the req header has authorization token
+    const token = request.headers().authorization?.split(' ')[1];
+    if (!token) {
+      response.badRequest({ message: 'Access Token missing for successful logout!' });
+      return;
+    }
     await auth.use('api').revoke();
-    return {
-      revoked: true,
-    };
+    response.status(200).json({ message: 'Logout Successfully.' });
   }
 }

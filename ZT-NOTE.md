@@ -26,4 +26,4 @@ exception handler
 6. tech debts
 -- need to manully delete token from sql table, once token expires, but logout will do it, in case of forgotting logout, than you lost the access token (at header, client side won't be able to logout again, need to go database delete)
 
---
+-- need to handle access token expired in 1 day

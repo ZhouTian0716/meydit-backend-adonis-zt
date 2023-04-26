@@ -5,8 +5,8 @@
  * file.
  */
 
-import Env from '@ioc:Adonis/Core/Env'
-import { DatabaseConfig } from '@ioc:Adonis/Lucid/Database'
+import Env from '@ioc:Adonis/Core/Env';
+import { DatabaseConfig } from '@ioc:Adonis/Lucid/Database';
 
 const databaseConfig: DatabaseConfig = {
   /*
@@ -36,11 +36,11 @@ const databaseConfig: DatabaseConfig = {
     pg: {
       client: 'pg',
       connection: {
-        host: Env.get('PG_HOST'),
-        port: Env.get('PG_PORT'),
-        user: Env.get('PG_USER'),
-        password: Env.get('PG_PASSWORD', ''),
-        database: Env.get('PG_DB_NAME'),
+        host: Env.get('CONNECT_RDS') ? Env.get('AWS_RDS_PG_HOST') : Env.get('PG_HOST'),
+        port: Env.get('CONNECT_RDS') ? Env.get('AWS_RDS_PG_PORT') : Env.get('PG_PORT'),
+        user: Env.get('CONNECT_RDS') ? Env.get('AWS_RDS_PG_USER') : Env.get('PG_USER'),
+        password: Env.get('CONNECT_RDS') ? Env.get('AWS_RDS_PG_PASSWORD') : Env.get('PG_PASSWORD'),
+        database: Env.get('CONNECT_RDS') ? Env.get('AWS_RDS_PG_DB_NAME') : Env.get('PG_DB_NAME'),
       },
       migrations: {
         naturalSort: true,
@@ -48,8 +48,7 @@ const databaseConfig: DatabaseConfig = {
       healthCheck: false,
       debug: false,
     },
+  },
+};
 
-  }
-}
-
-export default databaseConfig
+export default databaseConfig;

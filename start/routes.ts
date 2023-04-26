@@ -19,10 +19,17 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route';
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 
-Route.get('/', async () => {
-  return { hello: 'world' };
+
+// Healthcheck
+Route.get('/', ({ response }: HttpContextContract) => {
+  response.status(200).json({ hello: 'api home' });
 });
+
+Route.get('/healthcheck', ({ response }: HttpContextContract) =>
+  response.status(200).json({ hello: 'healthcheck' })
+);
 
 Route.group(() => {
   Route.resource('/accounts', 'AccountsController').apiOnly();

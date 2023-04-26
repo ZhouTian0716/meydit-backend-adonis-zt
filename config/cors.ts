@@ -44,7 +44,7 @@ const corsConfig: CorsConfig = {
   |                     one of the above values.
   |
   */
-  origin: ['http://localhost:5173', 'http://myfrontend.com'],
+  origin: ['http://localhost:5173', 'https://meydit-frontend-react-zt.vercel.app/'],
 
   /*
   |--------------------------------------------------------------------------

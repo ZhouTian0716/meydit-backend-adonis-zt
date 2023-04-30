@@ -16,16 +16,27 @@ const s3 = new S3({
   signatureVersion: 'v4',
 });
 
-export const generateUploadURL = async (fileExtension:String) => {
+export const getUploadURL = async (fileExtension: String) => {
   const rawBytes = await randomBytes(6);
   const imageName = rawBytes.toString('hex');
   const params = {
     Bucket: bucketName,
     Key: `project-images/${imageName}.${fileExtension}`,
     Expires: 5 * 60,
-    ContentType:`image/${fileExtension}`
+    ContentType: `image/${fileExtension}`,
   };
 
-  const uploadURL = await s3.getSignedUrlPromise('putObject', params);
-  return uploadURL;
+  const uploadUrl = await s3.getSignedUrlPromise('putObject', params);
+  return { uploadUrl, fileName: params.Key };
+};
+
+export const getDeleteURL = async (key: String) => {
+  const params = {
+    Bucket: bucketName,
+    Key: key,
+    Expires: 5 * 60,
+  };
+
+  const deleteUrl = await s3.getSignedUrlPromise('deleteObject', params);
+  return deleteUrl;
 };

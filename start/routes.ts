@@ -39,4 +39,5 @@ Route.group(() => {
     .apiOnly();
   Route.post('/auth/login', 'AuthController.login').as('auth.login');
   Route.post('/auth/logout', 'AuthController.logout').as('auth.logout');
+  Route.get('/aws/s3', 'AwsS3Controller.secureUrl').as('awsS3.secureUrl');
 }).prefix('api');

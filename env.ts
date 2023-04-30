@@ -33,4 +33,8 @@ export default Env.rules({
   AWS_RDS_PG_USER: Env.schema.string(),
   AWS_RDS_PG_PASSWORD: Env.schema.string.optional(),
   AWS_RDS_PG_DB_NAME: Env.schema.string(),
+  AWS_S3_REGION: Env.schema.string(),
+  AWS_S3_BUCKET: Env.schema.string(),
+  AWS_S3_ACCESS_KEY_ID: Env.schema.string(),
+  AWS_S3_SECRET_ACCESS_KEY: Env.schema.string(),
 });

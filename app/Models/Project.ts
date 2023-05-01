@@ -33,7 +33,7 @@ export default class Project extends AppBaseModel {
   public makerId: number;
 
   @column({ serializeAs: null })
-  public accountId: number;
+  public clientId: number;
 
   // ZT-NOTE: format can be change
   // { autoCreate: true, serialize: (value: DateTime) => value.toFormat('dd LLL yyyy'),}
@@ -44,12 +44,12 @@ export default class Project extends AppBaseModel {
   public updatedAt: DateTime;
 
   // ZT-NOTE: Relationships
-  @belongsTo(() => Account, { foreignKey: 'accountId' })
+  @belongsTo(() => Account,{ foreignKey: 'clientId' })
   public client: BelongsTo<typeof Account>;
 
   @belongsTo(() => Account, { foreignKey: 'makerId' })
   public maker: BelongsTo<typeof Account>;
 
-  @hasMany(() => Image)
+  @hasMany(() => Image, { foreignKey: 'projectId' })
   public images: HasMany<typeof Image>;
 }

@@ -32,7 +32,8 @@ export default class AccountsController {
   public async show({ response, params }: HttpContextContract) {
     try {
       const { id } = params;
-      const account = await Account.findBy('id', id);
+      // ZT-NOTE: 这里需不需要projects也一同查询，取决于前端需不需要
+      const account = await Account.query().preload('projects').where('id', id);
       if (!account) return response.status(404).json({ message: 'Account not found' });
       return response.status(200).send(account);
       // return response.status(200).json(account.first_name);

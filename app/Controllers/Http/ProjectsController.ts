@@ -13,6 +13,8 @@ export default class ProjectsController {
       // ZT-NOTE: The preload('account') here, 'account' need to match the relation field defined in the Project model
       const projects = await Project.query()
         .preload('client')
+        .preload('maker')
+        .preload('images')
         .orderBy('id', 'desc')
         .paginate(page, perPage);
       // ZT-NOTE: way to serialize the data
@@ -28,27 +30,30 @@ export default class ProjectsController {
 
   public async store({ request, response, auth }: HttpContextContract) {
     const isClient = auth.user?.$original.role === 'client';
-
     if (!isClient) {
       return response.unauthorized({
-        errors: [{ message: 'Only client can create project' }],
+        errors: [{ message: 'Only Login user with client role can create his/her project' }],
       });
     }
 
     const payload = await request.validate(CreateProjectValidator);
+
     const project = await auth.user!.related('projects').create({ ...payload, status: 'Released' });
 
-    project.$setRelated('account', auth.user!);
+    // ZT-NOTE: 暂时不需要贴上下面这行的data
+    // project.$setRelated('client', auth.user!);
 
-    response.created({
-      data: project,
-    });
+    response.status(201).json(project);
   }
 
   public async show({ response, params }: HttpContextContract) {
     try {
       const { id } = params;
-      const project = await Project.query().preload('client').preload('maker').where('slug', id);
+      const project = await Project.query()
+        .preload('client')
+        .preload('maker')
+        .preload('images')
+        .where('slug', id);
       if (project) {
         return response.json(project);
       }

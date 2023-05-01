@@ -40,6 +40,8 @@ export default class Account extends AppBaseModel {
     }
   }
 
-  @hasMany(() => Project)
+  // ZT-NOTE: 这里的clientId是为了修改因为这个关系输出的改名
+  // 否则默认是accountId
+  @hasMany(() => Project, { foreignKey: 'clientId' })
   public projects: HasMany<typeof Project>;
 }

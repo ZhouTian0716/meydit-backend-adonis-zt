@@ -12,10 +12,10 @@ export default class ProjectsController {
       const perPage = request.input('per_page') || 3;
       // ZT-NOTE: The preload('account') here, 'account' need to match the relation field defined in the Project model
       const projects = await Project.query()
-        .preload('account')
+        .preload('client')
         .orderBy('id', 'desc')
         .paginate(page, perPage);
-      // ZT-NOTE: way to serialize the data  
+      // ZT-NOTE: way to serialize the data
       // const projectsSerialized = projects.serialize({
       //   fields: ['title', 'id','image'],
       // });
@@ -48,7 +48,7 @@ export default class ProjectsController {
   public async show({ response, params }: HttpContextContract) {
     try {
       const { id } = params;
-      const project = await Project.query().preload('account').where('slug', id);
+      const project = await Project.query().preload('client').preload('maker').where('slug', id);
       if (project) {
         return response.json(project);
       }

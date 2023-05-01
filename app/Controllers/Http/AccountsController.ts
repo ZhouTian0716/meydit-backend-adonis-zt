@@ -4,7 +4,6 @@ import Hash from '@ioc:Adonis/Core/Hash';
 import CreateAccountValidator from 'App/Validators/Account/CreateAccountValidator';
 import UpdateAccountValidator from 'App/Validators/Account/UpdateAccountValidator';
 
-
 export default class AccountsController {
   public async index({ response }: HttpContextContract) {
     try {
@@ -24,7 +23,7 @@ export default class AccountsController {
       const res = await Account.create({ ...payload });
       response.status(201);
       return res;
-    } catch (error:any) {
+    } catch (error: any) {
       // ZT-NOTE: pass deeper for frontend to handle
       response.badRequest(error.messages.errors);
     }
@@ -33,13 +32,10 @@ export default class AccountsController {
   public async show({ response, params }: HttpContextContract) {
     try {
       const { id } = params;
-      const account = await Account.findBy('email', id);
-      if (account) {
-        response.status(200);
-        return account;
-      }
-      response.status(404);
-      return { message: 'Account not found' };
+      const account = await Account.findBy('id', id);
+      if (!account) return response.status(404).json({ message: 'Account not found' });
+      return response.status(200).send(account);
+      // return response.status(200).json(account.first_name);
     } catch (error) {
       return error;
     }

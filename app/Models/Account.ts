@@ -1,44 +1,45 @@
-import { DateTime } from 'luxon'
-import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
-import Project from './Project'
-
-export default class Account extends BaseModel {
+import AppBaseModel from './AppBaseModel';
+import { DateTime } from 'luxon';
+import Hash from '@ioc:Adonis/Core/Hash';
+import { column, beforeSave, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm';
+import Project from './Project';
+export default class Account extends AppBaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: number;
+
+  // ZT-NOTE: { serializeAs: 'firstName' } serializeAs here is almost like a field alias return for frontend
+  @column()
+  public firstName: string | null | undefined;
 
   @column()
-  public first_name: string | null | undefined
+  public lastName: string | null | undefined;
 
   @column()
-  public last_name: string | null | undefined
-
-  @column()
-  public email: string
+  public email: string;
 
   // ZT-NOTE: { serializeAs: null } helps not returning sensitive data
   @column({ serializeAs: null })
-  public password: string
+  public password: string;
 
   @column()
-  public role: string
+  public role: string;
 
   @column()
-  public rememberMeToken: string | null
+  public rememberMeToken: string | null;
 
   @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
+  public createdAt: DateTime;
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
+  public updatedAt: DateTime;
 
   @beforeSave()
-  public static async hashPassword (account: Account) {
+  public static async hashPassword(account: Account) {
     if (account.$dirty.password) {
-      account.password = await Hash.make(account.password)
+      account.password = await Hash.make(account.password);
     }
   }
 
   @hasMany(() => Project)
-  public projects: HasMany<typeof Project>
+  public projects: HasMany<typeof Project>;
 }

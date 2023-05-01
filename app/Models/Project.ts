@@ -1,14 +1,13 @@
+import AppBaseModel from './AppBaseModel';
 import { DateTime } from 'luxon';
-import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
+import { BelongsTo, HasMany, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm';
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify';
 import Account from './Account';
+import Image from './Image';
 
-export default class Project extends BaseModel {
+export default class Project extends AppBaseModel {
   @column({ isPrimary: true })
   public id: number;
-
-  @column()
-  public title: string;
 
   @column()
   @slugify({
@@ -19,10 +18,13 @@ export default class Project extends BaseModel {
   public slug: string;
 
   @column()
+  public title: string;
+
+  @column()
   public description: string | null;
 
   @column()
-  public image: string | null;
+  public startPrice: number | null;
 
   @column()
   public status: string;
@@ -41,9 +43,13 @@ export default class Project extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime;
 
-  @belongsTo(() => Account)
-  public account: BelongsTo<typeof Account>;
+  // ZT-NOTE: Relationships
+  @belongsTo(() => Account, { foreignKey: 'accountId' })
+  public client: BelongsTo<typeof Account>;
 
-  // ZT-NOTE: computed feature
-  // Adding a computed property to the return object for this model
+  @belongsTo(() => Account, { foreignKey: 'makerId' })
+  public maker: BelongsTo<typeof Account>;
+
+  @hasMany(() => Image)
+  public images: HasMany<typeof Image>;
 }

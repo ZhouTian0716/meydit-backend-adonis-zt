@@ -11,13 +11,13 @@ export default class UpdateAccountValidator {
       rules.maxLength(50),
     ]),
     role: schema.enum.nullableAndOptional(['client', 'maker', 'admin'] as const),
-    first_name: schema.string.nullableAndOptional({ trim: true }, [
+    firstName: schema.string.nullableAndOptional({ trim: true }, [
       rules.alpha({
         allow: ['space', 'underscore', 'dash'],
       }),
       rules.minLength(2),
     ]),
-    last_name: schema.string.nullableAndOptional({ trim: true }, [
+    lastName: schema.string.nullableAndOptional({ trim: true }, [
       rules.alpha({
         allow: ['space', 'underscore', 'dash'],
       }),

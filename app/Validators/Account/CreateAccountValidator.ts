@@ -17,13 +17,13 @@ export default class CreateAccountValidator {
       rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).+$/),
     ]),
     role: schema.enum(['client', 'maker', 'admin'] as const),
-    first_name: schema.string.nullableAndOptional({ trim: true }, [
+    firstName: schema.string.nullableAndOptional({ trim: true }, [
       rules.alpha({
         allow: ['space', 'underscore', 'dash'],
       }),
       rules.minLength(2),
     ]),
-    last_name: schema.string.nullableAndOptional({ trim: true }, [
+    lastName: schema.string.nullableAndOptional({ trim: true }, [
       rules.alpha({
         allow: ['space', 'underscore', 'dash'],
       }),

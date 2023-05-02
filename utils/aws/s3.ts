@@ -27,7 +27,9 @@ export const getUploadURL = async (fileExtension: String) => {
   };
 
   const uploadUrl = await s3.getSignedUrlPromise('putObject', params);
-  return { uploadUrl, fileName: params.Key };
+  // ZT-NOTE:👻这里手动构建file存在s3上的url，方便存到postgres数据库
+  const urlOnS3 = `https://${bucketName}.s3.${region}.amazonaws.com/${params.Key}`;
+  return { uploadUrl, urlOnS3, fileName: params.Key };
 };
 
 export const getDeleteURL = async (key: String) => {

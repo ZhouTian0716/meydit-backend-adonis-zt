@@ -4,8 +4,8 @@ import { getDeleteURL, getUploadURL } from '../../../utils/aws/s3';
 export default class AwsS3Controller {
   public async secureUrlForUpload({ request, response }: HttpContextContract) {
     const extension = request.qs().fileType;
-    const { uploadUrl, fileName } = await getUploadURL(extension);
-    return response.status(200).json({ uploadUrl, fileName });
+    const res = await getUploadURL(extension);
+    return response.status(200).json(res);
   }
   public async secureUrlForDelete({ request, response }: HttpContextContract) {
     const key = request.qs().fileName;

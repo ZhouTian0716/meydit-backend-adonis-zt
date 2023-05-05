@@ -1,9 +1,12 @@
 import AppBaseModel from './AppBaseModel';
 import { DateTime } from 'luxon';
-import { BelongsTo, HasMany, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm';
+import { BelongsTo, HasMany, ManyToMany, belongsTo, column, hasMany, manyToMany } from '@ioc:Adonis/Lucid/Orm';
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify';
 import Account from './Account';
+import Category from './Category';
+import Status from './Status';
 import Image from './Image';
+import Tag from './Tag';
 
 export default class Project extends AppBaseModel {
   @column({ isPrimary: true })
@@ -26,14 +29,17 @@ export default class Project extends AppBaseModel {
   @column()
   public startPrice: number | null;
 
-  @column()
-  public status: string;
+  @column({ serializeAs: null })
+  public statusId: number;
 
   @column({ serializeAs: null })
   public makerId: number;
 
   @column({ serializeAs: null })
   public clientId: number;
+
+  @column({ serializeAs: null })
+  public categoryId: number;
 
   // ZT-NOTE: format can be change
   // { autoCreate: true, serialize: (value: DateTime) => value.toFormat('dd LLL yyyy'),}
@@ -44,6 +50,12 @@ export default class Project extends AppBaseModel {
   public updatedAt: DateTime;
 
   // ZT-NOTE: Relationships
+  @belongsTo(() => Category,{ foreignKey: 'categoryId' })
+  public category: BelongsTo<typeof Category>;
+
+  @belongsTo(() => Status,{ foreignKey: 'statusId' })
+  public status: BelongsTo<typeof Status>;
+
   @belongsTo(() => Account,{ foreignKey: 'clientId' })
   public client: BelongsTo<typeof Account>;
 
@@ -52,4 +64,14 @@ export default class Project extends AppBaseModel {
 
   @hasMany(() => Image, { foreignKey: 'projectId' })
   public images: HasMany<typeof Image>;
+
+  @manyToMany(() => Tag, {
+    localKey: 'id',
+    pivotForeignKey: 'projectId',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'tagId',
+    pivotTable: 'project_tag_relations',
+    pivotTimestamps: true
+  })
+  public tags: ManyToMany<typeof Tag>
 }

@@ -42,6 +42,9 @@ const databaseConfig: DatabaseConfig = {
         password: Env.get('CONNECT_RDS') ? Env.get('AWS_RDS_PG_PASSWORD') : Env.get('PG_PASSWORD'),
         database: Env.get('CONNECT_RDS') ? Env.get('AWS_RDS_PG_DB_NAME') : Env.get('PG_DB_NAME'),
       },
+      seeders:{
+        paths: ['./database/seeders/MainSeeder']
+      },
       migrations: {
         naturalSort: true,
       },

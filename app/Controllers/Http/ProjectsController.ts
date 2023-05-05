@@ -10,10 +10,11 @@ export default class ProjectsController {
       // pagination
       const page = request.input('page') || 1;
       const perPage = request.input('per_page') || 3;
-      // ZT-NOTE: The preload('account') here, 'account' need to match the relation field defined in the Project model
+      // ZT-NOTE: preload括号里的要对应上project model里的关系下定义的名字一致
       const projects = await Project.query()
         .preload('client')
         .preload('maker')
+        .preload('category')
         .preload('images')
         .orderBy('id', 'desc')
         .paginate(page, perPage);
@@ -52,7 +53,9 @@ export default class ProjectsController {
       const project = await Project.query()
         .preload('client')
         .preload('maker')
+        .preload('category')
         .preload('images')
+        
         .where('slug', id);
       if (project) {
         return response.json(project);

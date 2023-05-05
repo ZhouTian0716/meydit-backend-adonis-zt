@@ -1,8 +1,9 @@
 import AppBaseModel from './AppBaseModel';
 import { DateTime } from 'luxon';
 import Hash from '@ioc:Adonis/Core/Hash';
-import { column, beforeSave, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm';
+import { column, beforeSave, hasMany, HasMany, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm';
 import Project from './Project';
+import Role from './Role';
 export default class Account extends AppBaseModel {
   @column({ isPrimary: true })
   public id: number;
@@ -21,8 +22,8 @@ export default class Account extends AppBaseModel {
   @column({ serializeAs: null })
   public password: string;
 
-  @column()
-  public role: string;
+  @column({ serializeAs: null })
+  public roleId: number;
 
   @column()
   public rememberMeToken: string | null;
@@ -44,4 +45,7 @@ export default class Account extends AppBaseModel {
   // 否则默认是accountId
   @hasMany(() => Project, { foreignKey: 'clientId' })
   public projects: HasMany<typeof Project>;
+
+  @belongsTo(() => Role, { foreignKey: 'roleId' })
+  public role: BelongsTo<typeof Role>;
 }

@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table.string('last_name', 50).nullable();
       table.string('email', 255).notNullable().unique();
       table.string('password', 180).notNullable();
-      table.enu('role', ['client', 'maker', 'admin']).notNullable();
+      table.integer('role_id').notNullable().unsigned().references('roles.id').onDelete('CASCADE');
       table.string('remember_me_token').nullable();
       table.timestamp('created_at', { useTz: true }).notNullable();
       table.timestamp('updated_at', { useTz: true }).notNullable();

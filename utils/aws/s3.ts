@@ -19,12 +19,12 @@ const s3Client = new S3Client({
   region,
 });
 
-export const getUploadURL = async (fileExtension: String) => {
+export const getUploadURL = async (fileExtension: String, filesFolder: string, category:string) => {
   const rawBytes = await randomBytes(6);
   const imageName = rawBytes.toString('hex');
   const params = {
     Bucket: bucketName,
-    Key: `project-images/${imageName}.${fileExtension}`,
+    Key: `${category}-images/id-${filesFolder}/${imageName}.${fileExtension}`,
     ContentType: `image/${fileExtension}`,
   };
   let command = new PutObjectCommand(params);

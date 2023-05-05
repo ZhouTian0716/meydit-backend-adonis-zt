@@ -5,10 +5,10 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
+      table.increments('id').primary();
       table.string('url').notNullable().unique();
       table.string('file_name').notNullable();
-      table.integer('project_id').nullable().unsigned().references('id').inTable('projects').onDelete('CASCADE');
+      table.integer('project_id').nullable().unsigned().references('projects.id').onDelete('CASCADE');
       table.timestamp('created_at', { useTz: true }).notNullable();
     })
   }

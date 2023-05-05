@@ -32,8 +32,9 @@ Route.get('/healthcheck', ({ response }: HttpContextContract) =>
 );
 
 Route.group(() => {
-  Route.resource('/accounts', 'AccountsController').apiOnly();
   // Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();
+  Route.resource('/accounts', 'AccountsController').apiOnly();
+  Route.resource('/categories', 'CategoriesController').apiOnly();
   Route.resource('/projects', 'ProjectsController')
     .middleware({ store: ['auth'], update: ['auth'], destroy: ['auth'] })
     .apiOnly();

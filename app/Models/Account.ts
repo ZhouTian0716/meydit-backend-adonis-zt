@@ -12,10 +12,10 @@ export default class Account extends AppBaseModel {
 
   // ZT-NOTE: { serializeAs: 'firstName' } serializeAs here is almost like a field alias return for frontend
   @column()
-  public firstName: string | null | undefined;
+  public firstName: string | null ;
 
   @column()
-  public lastName: string | null | undefined;
+  public lastName: string | null ;
 
   @column()
   public email: string;
@@ -38,6 +38,7 @@ export default class Account extends AppBaseModel {
 
   @beforeSave()
   public static async hashPassword(account: Account) {
+    // $dirty here means password has been changed
     if (account.$dirty.password) {
       account.password = await Hash.make(account.password);
     }

@@ -8,10 +8,10 @@ export default class Profile extends AppBaseModel {
   public id: number;
 
   @column()
-  public avatar: string | null | undefined;
+  public avatar: string | null ;
 
   @column()
-  public bio: string | null | undefined;
+  public bio: string | null ;
 
   @column({ serializeAs: null })
   public accountId: number;

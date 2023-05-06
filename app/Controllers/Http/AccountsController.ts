@@ -32,8 +32,9 @@ export default class AccountsController {
       const { id } = params;
       // ZT-NOTE: 这里需不需要projects也一同查询，取决于前端需不需要
       // Check the account role.
-      const accountRole = (await Account.query().preload('role').where('id', id).first())?.role.name;
-      console.log(accountRole);
+      const accountRole = (await Account.query().preload('role').where('id', id).first())?.role
+        .name;
+      // console.log(accountRole);
       if (accountRole === 'Client') {
         const account = await Account.query()
           .preload('role')
@@ -44,7 +45,11 @@ export default class AccountsController {
         if (!account) return response.status(404).json({ message: 'Account not found' });
         return response.status(200).send(account);
       } else {
-        const account = await Account.query().preload('role').where('id', id).first();
+        const account = await Account.query()
+          .preload('role')
+          .preload('profile')
+          .where('id', id)
+          .first();
         if (!account) return response.status(404).json({ message: 'Account not found' });
         return response.status(200).send(account);
       }

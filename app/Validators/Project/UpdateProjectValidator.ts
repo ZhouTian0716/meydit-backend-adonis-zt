@@ -9,9 +9,8 @@ export default class UpdateProjectValidator {
       rules.minLength(2),
       rules.maxLength(50),
     ]),
-    image: schema.string.nullableAndOptional({ trim: true }),
     description: schema.string.nullableAndOptional({ trim: true }),
-    status: schema.enum.nullableAndOptional(['Released', 'In Progress', 'Completed'] as const),
+    statusId: schema.enum.nullableAndOptional([1, 2, 3] as const),
   });
 
   public messages: CustomMessages = {};

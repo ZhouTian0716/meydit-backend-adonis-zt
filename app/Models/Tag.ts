@@ -9,12 +9,16 @@ export default class Tag extends AppBaseModel {
   public name: string;
 
   @manyToMany(() => Project, {
-    localKey: 'id',
-    pivotForeignKey: 'tagId',
-    relatedKey: 'id',
-    pivotRelatedForeignKey: 'projectId',
-    pivotTable: 'project_tag_relations',
-    pivotTimestamps: true
+    pivotTable: 'project_tag',
   })
-  public projects: ManyToMany<typeof Project>
+  public projects: ManyToMany<typeof Project>;
 }
+
+// @manyToMany(() => Project, {
+//   localKey: 'id',
+//   pivotForeignKey: 'tagId',
+//   relatedKey: 'id',
+//   pivotRelatedForeignKey: 'projectId',
+//   pivotTable: 'project_tag',
+//   pivotTimestamps: true
+// })

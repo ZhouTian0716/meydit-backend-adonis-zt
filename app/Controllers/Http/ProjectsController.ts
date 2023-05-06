@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import Roles from 'App/Enums/Roles';
 import Project from 'App/Models/Project';
 import CreateProjectValidator from 'App/Validators/Project/CreateProjectValidator';
 import UpdateProjectValidator from 'App/Validators/Project/UpdateProjectValidator';
@@ -50,6 +51,26 @@ export default class ProjectsController {
     }
   }
 
+  public async store({ request, response, auth }: HttpContextContract) {
+    const isClient = auth.user?.$original.roleId === Roles.CLIENT;
+    // const selectedTags = request.query;
+
+    if (!isClient) {
+      return response.unauthorized({
+        errors: [{ message: 'Only client can create project' }],
+      });
+    }
+
+    const payload = await request.validate(CreateProjectValidator);
+    const project = await auth.user!.related('projects').create({ ...payload });
+
+    project.$setRelated('account', auth.user!);
+
+    await project.related('tags').attach([1, 2]);
+
+    response.status(201).json(project);
+  }
+
   public async show({ response, params }: HttpContextContract) {
     try {
       const { id } = params;
@@ -57,8 +78,9 @@ export default class ProjectsController {
         .preload('client')
         .preload('maker')
         .preload('category')
+        .preload('status')
         .preload('images')
-        // .preload('tags')
+        .preload('tags')
         .where('id', id)
         .first();
       if (!project) return response.status(404).json({ message: 'Project not found' });
@@ -68,12 +90,12 @@ export default class ProjectsController {
         relations: {
           maker: {
             fields: {
-              pick: ['firstName', 'lastName', 'email'],
+              pick: ['id', 'firstName', 'lastName', 'email'],
             },
           },
           client: {
             fields: {
-              pick: ['firstName', 'lastName', 'email'],
+              pick: ['id', 'firstName', 'lastName', 'email'],
             },
           },
           images: {
@@ -99,22 +121,28 @@ export default class ProjectsController {
   public async update({ request, response, params }: HttpContextContract) {
     try {
       const { id } = params;
+      const project = await Project.findBy('id', id);
+      if (!project) return response.status(404).json({ message: 'Project not found' });
       const payload = await request.validate(UpdateProjectValidator);
       // console.log(payload);
-      await Project.query().where('slug', id).update(payload);
+      await Project.query().where('id', id).update(payload);
       return response.status(204);
     } catch (error) {
       return error;
     }
   }
 
-  public async destroy({ response, params }: HttpContextContract) {
+  public async destroy({ response, params, auth }: HttpContextContract) {
     try {
       const { id } = params;
-      const project = await Project.findBy('slug', id);
-      if (project) {
-        await project.delete();
-      }
+      const project = await Project.query().where('id', id).first();
+      console.log(project?.$original);
+      if (!project) return response.status(404).json({ message: 'Project not found' });
+      const authUserId = auth.user?.$original.id;
+      // console.log(authUserId);
+      if (project.$original.clientId !== authUserId)
+        return response.status(401).json({ message: 'Unauthorized' });
+      await project.delete();
       response.status(200);
     } catch (error) {
       return error;

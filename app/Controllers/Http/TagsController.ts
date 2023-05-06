@@ -11,7 +11,7 @@ const payloadSchema = schema.create({
 export default class TagsController {
   public async index({ response }: HttpContextContract) {
     try {
-      const tags = (await Tag.all()).sort((a, b) => a.id - b.id);
+      const tags = await Tag.all();
       return response.status(200).json(tags);
     } catch (error) {
       return error;

@@ -41,7 +41,7 @@ export default class Project extends AppBaseModel {
   public statusId: number;
 
   @column({ serializeAs: null })
-  public makerId: number;
+  public makerId: number | null;
 
   @column({ serializeAs: null })
   public clientId: number;
@@ -74,12 +74,17 @@ export default class Project extends AppBaseModel {
   public images: HasMany<typeof Image>;
 
   @manyToMany(() => Tag, {
-    localKey: 'id',
-    pivotForeignKey: 'projectId',
-    relatedKey: 'id',
-    pivotRelatedForeignKey: 'tagId',
-    pivotTable: 'project_tag_relations',
-    pivotTimestamps: true,
+    pivotTable: 'project_tag',
   })
   public tags: ManyToMany<typeof Tag>;
 }
+  
+// @manyToMany(() => Tag, {
+//   localKey: 'id',
+//   pivotForeignKey: 'projectId',
+//   relatedKey: 'id',
+//   pivotRelatedForeignKey: 'tagId',
+//   pivotTable: 'project_tag',
+//   pivotTimestamps: true,
+// })
+// public tags: ManyToMany<typeof Tag>;

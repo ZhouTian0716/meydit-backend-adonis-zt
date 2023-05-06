@@ -9,6 +9,12 @@ export default class CreateProjectValidator {
   // 比如这里的description，如果用optional, 那么在进入project修改页面时，description这个field就会被忽略，不会显示在页面上
   public schema = schema.create({
     title: schema.string({ trim: true }, [rules.minLength(2), rules.maxLength(50)]),
+    description: schema.string.optional({ trim: true }, [rules.minLength(2), rules.maxLength(500)]),
+    startPrice: schema.number(),
+    categoryId: schema.number.optional(),
+    tagIds: schema.array
+      .optional()
+      .members(schema.number([rules.exists({ table: 'tags', column: 'id' })])),
   });
 
   public messages: CustomMessages = {};

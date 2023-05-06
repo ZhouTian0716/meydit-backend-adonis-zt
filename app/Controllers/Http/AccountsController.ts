@@ -7,7 +7,7 @@ import UpdateAccountValidator from 'App/Validators/Account/UpdateAccountValidato
 export default class AccountsController {
   public async index({ response }: HttpContextContract) {
     try {
-      const accounts = await Account.all();
+      const accounts = await Account.query().preload('role').preload('profile').select('*');
       // const res = accounts.map((project) => project.serialize({ fields: ['id', 'email'] }));
       return response.status(200).json(accounts);
     } catch (error) {
@@ -16,8 +16,6 @@ export default class AccountsController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    // ZT-NOTE: if the validation fail, try catch here will go catch block,
-    // will get the error object
     try {
       const payload = await request.validate(CreateAccountValidator);
       const res = await Account.create({ ...payload });
@@ -33,10 +31,23 @@ export default class AccountsController {
     try {
       const { id } = params;
       // ZT-NOTE: 这里需不需要projects也一同查询，取决于前端需不需要
-      const account = await Account.query().preload('projects').where('id', id);
-      if (!account) return response.status(404).json({ message: 'Account not found' });
-      return response.status(200).send(account);
-      // return response.status(200).json(account.first_name);
+      // Check the account role.
+      const accountRole = (await Account.query().preload('role').where('id', id).first())?.role.name;
+      console.log(accountRole);
+      if (accountRole === 'Client') {
+        const account = await Account.query()
+          .preload('role')
+          .preload('projects')
+          .preload('profile')
+          .where('id', id)
+          .first();
+        if (!account) return response.status(404).json({ message: 'Account not found' });
+        return response.status(200).send(account);
+      } else {
+        const account = await Account.query().preload('role').where('id', id).first();
+        if (!account) return response.status(404).json({ message: 'Account not found' });
+        return response.status(200).send(account);
+      }
     } catch (error) {
       return error;
     }
@@ -50,7 +61,7 @@ export default class AccountsController {
         payload.password = await Hash.make(payload.password);
       }
       await Account.query()
-        .where('email', id)
+        .where('id', id)
         .update({ ...payload, password: payload.password });
       response.status(204);
     } catch (error) {
@@ -61,7 +72,7 @@ export default class AccountsController {
   public async destroy({ response, params }: HttpContextContract) {
     try {
       const { id } = params;
-      const account = await Account.findBy('email', id);
+      const account = await Account.findBy('id', id);
       if (account) {
         await account.delete();
       }

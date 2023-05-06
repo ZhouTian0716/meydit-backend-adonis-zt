@@ -4,13 +4,14 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 export default class UpdateAccountValidator {
   constructor(protected ctx: HttpContextContract) {}
 
+  // ZT-NOTE: 测试过，如果insomnia传了email（多余的field），这里也能过，但是数据库不会更新email（多余的field）
   public schema = schema.create({
-    password: schema.string.nullableAndOptional({ trim: true }, [
+    password: schema.string({ trim: true }, [
       rules.confirmed(),
-      rules.minLength(4),
-      rules.maxLength(50),
+      rules.minLength(8),
+      rules.maxLength(20),
+      rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).+$/),
     ]),
-    role: schema.enum.nullableAndOptional(['client', 'maker', 'admin'] as const),
     firstName: schema.string.nullableAndOptional({ trim: true }, [
       rules.alpha({
         allow: ['space', 'underscore', 'dash'],
@@ -25,7 +26,14 @@ export default class UpdateAccountValidator {
     ]),
   });
 
-  public messages: CustomMessages = {};
+  public messages: CustomMessages = {
+    'required': '{{ field }} is required',
+    'password.confirmed': 'Password confirmation does not match',
+    'password.minLength': 'Password must be at least {{ options.minLength }} characters',
+    'password.maxLength': 'Password not more than {{ options.maxLength }} characters',
+    'password.regex':
+      'The password must contain at least one uppercase letter, one number, one special character (except spaces).',
+  };
 }
 
 // ZT-NOTE: nullableAndOptional() is the suggested use case for patch request

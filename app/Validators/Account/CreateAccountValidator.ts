@@ -16,7 +16,9 @@ export default class CreateAccountValidator {
       rules.maxLength(20),
       rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).+$/),
     ]),
-    role: schema.enum(['client', 'maker', 'admin'] as const),
+    roleId: schema.number([
+      rules.unsigned(),
+    ]),
     firstName: schema.string.nullableAndOptional({ trim: true }, [
       rules.alpha({
         allow: ['space', 'underscore', 'dash'],
@@ -41,7 +43,6 @@ export default class CreateAccountValidator {
     'password.minLength': 'Password must be at least {{ options.minLength }} characters',
     'password.maxLength': 'Password not more than {{ options.maxLength }} characters',
     'password.regex': 'The password must contain at least one uppercase letter, one number, one special character (except spaces).',
-    'role.enum': 'The role must be one of these: {{ options.choices }}',
   };
 }
 

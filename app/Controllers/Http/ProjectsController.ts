@@ -8,43 +8,46 @@ export default class ProjectsController {
   public async index({ request, response }: HttpContextContract) {
     try {
       // pagination
-      const page = request.input('page') || 1;
-      const perPage = request.input('per_page') || 3;
-      // ZT-NOTE: preload括号里的要对应上project model里的关系下定义的名字一致
+      const perPage = parseInt(request.qs().perPage) || 10;
+      const page = parseInt(request.qs().page) || 1;
       const projects = await Project.query()
         .preload('client')
         .preload('maker')
         .preload('category')
         .preload('images')
+        .preload('tags')
         .orderBy('id', 'desc')
         .paginate(page, perPage);
-      // ZT-NOTE: way to serialize the data
-      // const projectsSerialized = projects.serialize({
-      //   fields: ['title', 'id','image'],
-      // });
-      return response.status(200).json(projects);
+
+      const serializedData = projects.serialize({
+        relations: {
+          maker: {
+            fields: {
+              pick: ['firstName', 'lastName', 'email'],
+            },
+          },
+          client: {
+            fields: {
+              pick: ['firstName', 'lastName', 'email'],
+            },
+          },
+          images: {
+            fields: {
+              pick: ['url', 'fileName'],
+            },
+          },
+        },
+      });
+
+      // Replace category object with its name property
+      serializedData.data.forEach((project) => {
+        project.category = project.category.name;
+      });
+
+      return response.status(200).json(serializedData);
     } catch (error) {
       return error;
-      // return response.badRequest(error.messages);
     }
-  }
-
-  public async store({ request, response, auth }: HttpContextContract) {
-    const isClient = auth.user?.$original.role === 'client';
-    if (!isClient) {
-      return response.unauthorized({
-        errors: [{ message: 'Only Login user with client role can create his/her project' }],
-      });
-    }
-
-    const payload = await request.validate(CreateProjectValidator);
-
-    const project = await auth.user!.related('projects').create({ ...payload, status: 'Released' });
-
-    // ZT-NOTE: 暂时不需要贴上下面这行的data
-    // project.$setRelated('client', auth.user!);
-
-    response.status(201).json(project);
   }
 
   public async show({ response, params }: HttpContextContract) {
@@ -55,12 +58,39 @@ export default class ProjectsController {
         .preload('maker')
         .preload('category')
         .preload('images')
-        
-        .where('slug', id);
-      if (project) {
-        return response.json(project);
-      }
-      return response.status(404).json({ message: 'Project not found' });
+        // .preload('tags')
+        .where('id', id)
+        .first();
+      if (!project) return response.status(404).json({ message: 'Project not found' });
+
+      // Exclude the `category` relation from the serialized data
+      const { category, ...serializedData } = project.serialize({
+        relations: {
+          maker: {
+            fields: {
+              pick: ['firstName', 'lastName', 'email'],
+            },
+          },
+          client: {
+            fields: {
+              pick: ['firstName', 'lastName', 'email'],
+            },
+          },
+          images: {
+            fields: {
+              pick: ['url', 'fileName'],
+            },
+          },
+        },
+      });
+
+      // Add the `category` field to the response object
+      const responseObj = {
+        ...serializedData,
+        category: category.name,
+      };
+
+      return response.json(responseObj);
     } catch (error) {
       return error;
     }

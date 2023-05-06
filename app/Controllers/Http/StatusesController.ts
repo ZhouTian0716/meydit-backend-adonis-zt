@@ -1,18 +1,18 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
-import Category from 'App/Models/Category';
+import Status from 'App/Models/Status';
 import { schema, rules } from '@ioc:Adonis/Core/Validator';
 
 const payloadSchema = schema.create({
   name: schema.string({ trim: true }, [
-    rules.unique({ table: 'categories', column: 'name', caseInsensitive: true }),
+    rules.unique({ table: 'statuses', column: 'name', caseInsensitive: true }),
   ]),
 });
 
-export default class CategoriesController {
+export default class StatusesController {
   public async index({ response }: HttpContextContract) {
     try {
-      const categories = await Category.query().preload('projects').select('*');
-      return response.status(200).json(categories);
+      const statuses = await Status.query().preload('projects').select('*');
+      return response.status(200).json(statuses);
     } catch (error) {
       return error;
     }
@@ -21,7 +21,7 @@ export default class CategoriesController {
   public async store({ request, response }: HttpContextContract) {
     try {
       const payload = await request.validate({ schema: payloadSchema });
-      const res = await Category.create({ name: payload.name });
+      const res = await Status.create({ name: payload.name });
       response.status(201);
       return res;
     } catch (error) {
@@ -34,9 +34,9 @@ export default class CategoriesController {
     try {
       const { id } = params;
       // ZT-NOTE: 这里需不需要projects也一同查询，取决于前端需不需要
-      const category = await Category.query().preload('projects').where('id', id).first();
-      if (!category) return response.status(404).json({ message: 'Category not found' });
-      return response.status(200).json(category);
+      const status = await Status.query().preload('projects').where('id', id).first();
+      if (!status) return response.status(404).json({ message: 'Status not found' });
+      return response.status(200).json(status);
     } catch (error) {
       return error;
     }
@@ -47,7 +47,7 @@ export default class CategoriesController {
       const { id } = params;
       const payload = await request.validate({ schema: payloadSchema });
       if (!payload.name) return;
-      const res = await Category.query().where('id', id).update({ name: payload.name });
+      const res = await Status.query().where('id', id).update({ name: payload.name });
       return response.status(204).json(res);
     } catch (error) {
       return error;
@@ -57,10 +57,10 @@ export default class CategoriesController {
   public async destroy({ response, params }: HttpContextContract) {
     try {
       const { id } = params;
-      const category = await Category.findBy('id', id);
-      if (!category) return;
-      await category.delete();
-      return response.status(200).json({ deleted: category });
+      const status = await Status.findBy('id', id);
+      if (!status) return;
+      await status.delete();
+      return response.status(200).json({ deleted: status });
     } catch (error) {
       return error;
     }

@@ -1,9 +1,11 @@
 import AppBaseModel from './AppBaseModel';
 import { DateTime } from 'luxon';
 import Hash from '@ioc:Adonis/Core/Hash';
-import { column, beforeSave, hasMany, HasMany, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm';
+import { column, beforeSave, hasMany, HasMany, belongsTo, BelongsTo, HasOne, hasOne } from '@ioc:Adonis/Lucid/Orm';
 import Project from './Project';
 import Role from './Role';
+import Profile from './Profile';
+
 export default class Account extends AppBaseModel {
   @column({ isPrimary: true })
   public id: number;
@@ -43,6 +45,9 @@ export default class Account extends AppBaseModel {
 
   // ZT-NOTE: 这里的clientId是为了修改因为这个关系输出的改名
   // 否则默认是accountId
+  @hasOne(() => Profile, { foreignKey: 'accountId' })
+  public profile: HasOne<typeof Profile>;
+
   @hasMany(() => Project, { foreignKey: 'clientId' })
   public projects: HasMany<typeof Project>;
 

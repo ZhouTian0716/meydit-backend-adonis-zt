@@ -1,6 +1,14 @@
 import AppBaseModel from './AppBaseModel';
 import { DateTime } from 'luxon';
-import { BelongsTo, HasMany, ManyToMany, belongsTo, column, hasMany, manyToMany } from '@ioc:Adonis/Lucid/Orm';
+import {
+  BelongsTo,
+  HasMany,
+  ManyToMany,
+  belongsTo,
+  column,
+  hasMany,
+  manyToMany,
+} from '@ioc:Adonis/Lucid/Orm';
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify';
 import Account from './Account';
 import Category from './Category';
@@ -50,13 +58,13 @@ export default class Project extends AppBaseModel {
   public updatedAt: DateTime;
 
   // ZT-NOTE: Relationships
-  @belongsTo(() => Category,{ foreignKey: 'categoryId' })
+  @belongsTo(() => Category, { foreignKey: 'categoryId' })
   public category: BelongsTo<typeof Category>;
 
-  @belongsTo(() => Status,{ foreignKey: 'statusId' })
+  @belongsTo(() => Status, { foreignKey: 'statusId' })
   public status: BelongsTo<typeof Status>;
 
-  @belongsTo(() => Account,{ foreignKey: 'clientId' })
+  @belongsTo(() => Account, { foreignKey: 'clientId' })
   public client: BelongsTo<typeof Account>;
 
   @belongsTo(() => Account, { foreignKey: 'makerId' })
@@ -71,7 +79,7 @@ export default class Project extends AppBaseModel {
     relatedKey: 'id',
     pivotRelatedForeignKey: 'tagId',
     pivotTable: 'project_tag_relations',
-    pivotTimestamps: true
+    pivotTimestamps: true,
   })
-  public tags: ManyToMany<typeof Tag>
+  public tags: ManyToMany<typeof Tag>;
 }

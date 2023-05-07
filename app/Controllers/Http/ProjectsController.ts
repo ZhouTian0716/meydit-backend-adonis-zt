@@ -3,6 +3,7 @@ import Roles from 'App/Enums/Roles';
 import Project from 'App/Models/Project';
 import CreateProjectValidator from 'App/Validators/Project/CreateProjectValidator';
 import UpdateProjectValidator from 'App/Validators/Project/UpdateProjectValidator';
+import { schema, rules } from '@ioc:Adonis/Core/Validator';
 // import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 
 export default class ProjectsController {
@@ -54,7 +55,6 @@ export default class ProjectsController {
   public async store({ request, response, auth }: HttpContextContract) {
     const isClient = auth.user?.$original.roleId === Roles.CLIENT;
     // const selectedTags = request.query;
-
     if (!isClient) {
       return response.unauthorized({
         errors: [{ message: 'Only client can create project' }],
@@ -62,11 +62,12 @@ export default class ProjectsController {
     }
 
     const payload = await request.validate(CreateProjectValidator);
-    const project = await auth.user!.related('projects').create({ ...payload });
+    const { tagIds, ...rest } = payload;
+    const project = await auth.user!.related('projects').create({ ...rest });
 
     project.$setRelated('account', auth.user!);
 
-    await project.related('tags').attach([1, 2]);
+    tagIds && (await project.related('tags').attach(tagIds));
 
     response.status(201).json(project);
   }
@@ -118,13 +119,15 @@ export default class ProjectsController {
     }
   }
 
-  public async update({ request, response, params }: HttpContextContract) {
+  public async update({ request, response, params, auth }: HttpContextContract) {
     try {
       const { id } = params;
-      const project = await Project.findBy('id', id);
+      const project = await Project.query().where('id', id).first();
       if (!project) return response.status(404).json({ message: 'Project not found' });
+      const authUserId = auth.user?.$original.id;
+      if (project.$original.clientId !== authUserId)
+        return response.status(401).json({ message: 'Unauthorized' });
       const payload = await request.validate(UpdateProjectValidator);
-      // console.log(payload);
       await Project.query().where('id', id).update(payload);
       return response.status(204);
     } catch (error) {
@@ -136,7 +139,7 @@ export default class ProjectsController {
     try {
       const { id } = params;
       const project = await Project.query().where('id', id).first();
-      console.log(project?.$original);
+      // console.log(project?.$original);
       if (!project) return response.status(404).json({ message: 'Project not found' });
       const authUserId = auth.user?.$original.id;
       // console.log(authUserId);

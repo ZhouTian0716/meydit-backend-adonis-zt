@@ -12,6 +12,8 @@ export default class CreateProjectValidator {
     description: schema.string.optional({ trim: true }, [rules.minLength(2), rules.maxLength(500)]),
     startPrice: schema.number(),
     categoryId: schema.number.optional(),
+    // ZT-NOTE: 这里的tagIds是一个array，所以用members
+    // 修改的不是project本身，这些个field拿去赋给project以外的model
     tagIds: schema.array
       .optional()
       .members(schema.number([rules.exists({ table: 'tags', column: 'id' })])),

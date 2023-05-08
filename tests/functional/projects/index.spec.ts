@@ -23,7 +23,7 @@ test.group('Projects index', (group) => {
     response.assertAgainstApiSpec();
     response.assertBodyContains({ meta: { total: 40, per_page: 20, current_page: 1 } });
 
-    const projects = await Project.query().limit(20).preload('account').orderBy('id', 'desc');
+    const projects = await Project.query().limit(20).preload('client').orderBy('id', 'desc');
     assert.containsSubset(
       response.body().data,
       projects.map((row) => row.toJSON())

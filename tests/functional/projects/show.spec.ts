@@ -17,7 +17,7 @@ test.group('Projects show', (group) => {
   })
 
   test('get project by id', async ({ client, route }) => {
-    const project = await ProjectFactory.query().with('account').create()
+    const project = await ProjectFactory.query().with('client').create()
     const response = await client.get(route('ProjectsController.show', { id: project.id }))
 
     response.assertStatus(200)

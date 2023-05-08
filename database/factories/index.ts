@@ -10,7 +10,7 @@ export const ProjectFactory = Factory.define(Project, ({ faker }) => {
     // slug:faker.lorem.words(3)
   };
 })
-  .relation('account', () => AccountFactory)
+  .relation('client', () => AccountFactory)
   .build();
 
 export const AccountFactory = Factory.define(Account, ({ faker }) => {

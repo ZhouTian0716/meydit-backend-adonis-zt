@@ -1,6 +1,7 @@
 import { schema, CustomMessages, rules } from '@ioc:Adonis/Core/Validator';
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 
+// ZT-NOTE: payload中，这里没有罗列的field都会被过滤掉，不会被更新
 export default class UpdateProjectValidator {
   constructor(protected ctx: HttpContextContract) {}
 
@@ -9,9 +10,9 @@ export default class UpdateProjectValidator {
       rules.minLength(2),
       rules.maxLength(50),
     ]),
-    image: schema.string.nullableAndOptional({ trim: true }),
     description: schema.string.nullableAndOptional({ trim: true }),
-    status: schema.enum.nullableAndOptional(['Released', 'In Progress', 'Completed'] as const),
+    statusId: schema.enum.nullableAndOptional([1, 2, 3] as const),
+    startPrice: schema.number(),
   });
 
   public messages: CustomMessages = {};

@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import Roles from 'App/Enums/Roles';
 import Project from 'App/Models/Project';
 import CreateProjectValidator from 'App/Validators/Project/CreateProjectValidator';
 import UpdateProjectValidator from 'App/Validators/Project/UpdateProjectValidator';
@@ -8,27 +9,51 @@ export default class ProjectsController {
   public async index({ request, response }: HttpContextContract) {
     try {
       // pagination
-      const page = request.input('page') || 1;
-      const perPage = request.input('per_page') || 3;
-      // ZT-NOTE: The preload('account') here, 'account' need to match the relation field defined in the Project model
+      const perPage = parseInt(request.qs().perPage) || 10;
+      const page = parseInt(request.qs().page) || 1;
       const projects = await Project.query()
-        .preload('account')
+        .preload('client')
+        .preload('maker')
+        .preload('category')
+        .preload('images')
+        .preload('tags')
         .orderBy('id', 'desc')
         .paginate(page, perPage);
-      // ZT-NOTE: way to serialize the data  
-      // const projectsSerialized = projects.serialize({
-      //   fields: ['title', 'id','image'],
-      // });
-      return response.status(200).json(projects);
+
+      const serializedData = projects.serialize({
+        relations: {
+          maker: {
+            fields: {
+              pick: ['firstName', 'lastName', 'email'],
+            },
+          },
+          client: {
+            fields: {
+              pick: ['firstName', 'lastName', 'email'],
+            },
+          },
+          images: {
+            fields: {
+              pick: ['url', 'fileName'],
+            },
+          },
+        },
+      });
+
+      // Replace category object with its name property
+      serializedData.data.forEach((project) => {
+        project.category = project.category.name;
+      });
+
+      return response.status(200).json(serializedData);
     } catch (error) {
       return error;
-      // return response.badRequest(error.messages);
     }
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
-    const isClient = auth.user?.$original.role === 'client';
-
+    const isClient = auth.user?.$original.roleId === Roles.CLIENT;
+    // const selectedTags = request.query;
     if (!isClient) {
       return response.unauthorized({
         errors: [{ message: 'Only client can create project' }],
@@ -36,47 +61,90 @@ export default class ProjectsController {
     }
 
     const payload = await request.validate(CreateProjectValidator);
-    const project = await auth.user!.related('projects').create({ ...payload, status: 'Released' });
+    const { tagIds, ...rest } = payload;
+    const project = await auth.user!.related('projects').create({ ...rest });
 
     project.$setRelated('account', auth.user!);
 
-    response.created({
-      data: project,
-    });
+    tagIds && (await project.related('tags').attach(tagIds));
+
+    response.status(201).json(project);
   }
 
   public async show({ response, params }: HttpContextContract) {
     try {
       const { id } = params;
-      const project = await Project.query().preload('account').where('slug', id);
-      if (project) {
-        return response.json(project);
-      }
-      return response.status(404).json({ message: 'Project not found' });
+      const project = await Project.query()
+        .preload('client')
+        .preload('maker')
+        .preload('category')
+        .preload('status')
+        .preload('images')
+        .preload('tags')
+        .where('id', id)
+        .first();
+      if (!project) return response.status(404).json({ message: 'Project not found' });
+
+      // Exclude the `category` relation from the serialized data
+      const { category, ...serializedData } = project.serialize({
+        relations: {
+          maker: {
+            fields: {
+              pick: ['id', 'firstName', 'lastName', 'email'],
+            },
+          },
+          client: {
+            fields: {
+              pick: ['id', 'firstName', 'lastName', 'email'],
+            },
+          },
+          images: {
+            fields: {
+              pick: ['url', 'fileName'],
+            },
+          },
+        },
+      });
+
+      // Add the `category` field to the response object
+      const responseObj = {
+        ...serializedData,
+        category: category.name,
+      };
+
+      return response.json(responseObj);
     } catch (error) {
       return error;
     }
   }
 
-  public async update({ request, response, params }: HttpContextContract) {
+  public async update({ request, response, params, auth }: HttpContextContract) {
     try {
       const { id } = params;
+      const project = await Project.query().where('id', id).first();
+      if (!project) return response.status(404).json({ message: 'Project not found' });
+      const authUserId = auth.user?.$original.id;
+      if (project.$original.clientId !== authUserId)
+        return response.status(401).json({ message: 'Unauthorized' });
       const payload = await request.validate(UpdateProjectValidator);
-      // console.log(payload);
-      await Project.query().where('slug', id).update(payload);
+      await Project.query().where('id', id).update(payload);
       return response.status(204);
     } catch (error) {
       return error;
     }
   }
 
-  public async destroy({ response, params }: HttpContextContract) {
+  public async destroy({ response, params, auth }: HttpContextContract) {
     try {
       const { id } = params;
-      const project = await Project.findBy('slug', id);
-      if (project) {
-        await project.delete();
-      }
+      const project = await Project.query().where('id', id).first();
+      // console.log(project?.$original);
+      if (!project) return response.status(404).json({ message: 'Project not found' });
+      const authUserId = auth.user?.$original.id;
+      // console.log(authUserId);
+      if (project.$original.clientId !== authUserId)
+        return response.status(401).json({ message: 'Unauthorized' });
+      await project.delete();
       response.status(200);
     } catch (error) {
       return error;

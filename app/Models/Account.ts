@@ -1,44 +1,57 @@
-import { DateTime } from 'luxon'
-import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
-import Project from './Project'
+import AppBaseModel from './AppBaseModel';
+import { DateTime } from 'luxon';
+import Hash from '@ioc:Adonis/Core/Hash';
+import { column, beforeSave, hasMany, HasMany, belongsTo, BelongsTo, HasOne, hasOne } from '@ioc:Adonis/Lucid/Orm';
+import Project from './Project';
+import Role from './Role';
+import Profile from './Profile';
 
-export default class Account extends BaseModel {
+export default class Account extends AppBaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: number;
+
+  // ZT-NOTE: { serializeAs: 'firstName' } serializeAs here is almost like a field alias return for frontend
+  @column()
+  public firstName: string | null ;
 
   @column()
-  public first_name: string | null | undefined
+  public lastName: string | null ;
 
   @column()
-  public last_name: string | null | undefined
-
-  @column()
-  public email: string
+  public email: string;
 
   // ZT-NOTE: { serializeAs: null } helps not returning sensitive data
   @column({ serializeAs: null })
-  public password: string
+  public password: string;
+
+  @column({ serializeAs: null })
+  public roleId: number;
 
   @column()
-  public role: string
-
-  @column()
-  public rememberMeToken: string | null
+  public rememberMeToken: string | null;
 
   @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
+  public createdAt: DateTime;
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
+  public updatedAt: DateTime;
 
   @beforeSave()
-  public static async hashPassword (account: Account) {
+  public static async hashPassword(account: Account) {
+    // $dirty here means password has been changed
     if (account.$dirty.password) {
-      account.password = await Hash.make(account.password)
+      account.password = await Hash.make(account.password);
     }
   }
 
-  @hasMany(() => Project)
-  public projects: HasMany<typeof Project>
+  // ZT-NOTE: 这里的clientId是为了修改因为这个关系输出的改名
+  // 否则默认是accountId
+  @hasOne(() => Profile, { foreignKey: 'accountId' })
+  public profile: HasOne<typeof Profile>;
+
+  @hasMany(() => Project, { foreignKey: 'clientId' })
+  public projects: HasMany<typeof Project>;
+
+  @belongsTo(() => Role, { foreignKey: 'roleId' })
+  public role: BelongsTo<typeof Role>;
 }

@@ -32,11 +32,19 @@ Route.get('/healthcheck', ({ response }: HttpContextContract) =>
 );
 
 Route.group(() => {
-  Route.resource('/accounts', 'AccountsController').apiOnly();
   // Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();
-  Route.resource('projects', 'ProjectsController')
+  Route.resource('/accounts', 'AccountsController').apiOnly();
+  Route.resource('/profiles', 'ProfilesController').apiOnly();  
+  Route.resource('/categories', 'CategoriesController').apiOnly();
+  Route.resource('/statuses', 'StatusesController').apiOnly();
+  Route.resource('/roles', 'RolesController').apiOnly();
+  Route.resource('/tags', 'TagsController').apiOnly();
+  Route.resource('/projects', 'ProjectsController')
     .middleware({ store: ['auth'], update: ['auth'], destroy: ['auth'] })
     .apiOnly();
+  Route.resource('/images', 'ImagesController').apiOnly();  
   Route.post('/auth/login', 'AuthController.login').as('auth.login');
   Route.post('/auth/logout', 'AuthController.logout').as('auth.logout');
+  Route.get('/aws/s3/upload', 'AwsS3Controller.secureUrlForUpload');
+  Route.get('/aws/s3/delete', 'AwsS3Controller.secureUrlForDelete');
 }).prefix('api');

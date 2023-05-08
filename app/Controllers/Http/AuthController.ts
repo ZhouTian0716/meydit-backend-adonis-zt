@@ -6,20 +6,21 @@ export default class AuthController {
     const email = request.input('email');
     const password = request.input('password');
     try {
-      const account = await Account.query().where('email', email).first();
+      const account = await Account.query()
+        .preload('role')
+        .preload('profile')
+        .where('email', email)
+        .first();
       if (!account) {
         return response.status(404).json({ message: 'Account not found' });
       }
-      const accountSerialized = account.serialize({
-        fields: ['first_name', 'last_name', 'role', 'email'],
-      });
 
       // If this attempt check fail, it will throw error
       const token = await auth.use('api').attempt(email, password, {
         expiresIn: '1 day',
       });
       const loginRes = {
-        account: accountSerialized,
+        account,
         token: token.toJSON(),
       };
       // The expiresIn, think about adding feature to refresh token

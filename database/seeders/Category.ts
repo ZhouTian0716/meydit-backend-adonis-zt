@@ -19,19 +19,22 @@ export default class CategorySeeder extends BaseSeeder {
         name: 'Shirt',
       },
       {
-        name: 'Pants',
+        name: 'Kids',
       },
       {
         name: 'Sportswear',
       },
       {
-        name: 'Jumpsuit',
+        name: 'Woman',
       },
       {
-        name: 'Smart casual',
+        name: 'Man',
       },
       {
         name: 'Accessories',
+      },
+      {
+        name: 'Hats',
       },
       {
         name: 'Others',

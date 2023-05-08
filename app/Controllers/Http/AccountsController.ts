@@ -7,7 +7,7 @@ import UpdateAccountValidator from 'App/Validators/Account/UpdateAccountValidato
 export default class AccountsController {
   public async index({ response }: HttpContextContract) {
     try {
-      const accounts = await Account.query().preload('role').preload('profile').select('*');
+      const accounts = await Account.query().preload('role').select('*');
       // const res = accounts.map((project) => project.serialize({ fields: ['id', 'email'] }));
       return response.status(200).json(accounts);
     } catch (error) {

@@ -6,7 +6,11 @@ export default class AuthController {
     const email = request.input('email');
     const password = request.input('password');
     try {
-      const account = await Account.query().where('email', email).first();
+      const account = await Account.query()
+        .preload('role')
+        .preload('profile')
+        .where('email', email)
+        .first();
       if (!account) {
         return response.status(404).json({ message: 'Account not found' });
       }

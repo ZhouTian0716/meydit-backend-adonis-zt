@@ -9,7 +9,7 @@ export default class Tag extends AppBaseModel {
   public name: string;
 
   @manyToMany(() => Project, {
-    pivotTable: 'project_tag',
+    pivotTable: 'project_tags',
   })
   public projects: ManyToMany<typeof Project>;
 }

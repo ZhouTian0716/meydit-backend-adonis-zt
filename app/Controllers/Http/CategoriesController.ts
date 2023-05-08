@@ -11,7 +11,7 @@ const payloadSchema = schema.create({
 export default class CategoriesController {
   public async index({ response }: HttpContextContract) {
     try {
-      const categories = await Category.query().preload('projects').select('*');
+      const categories = await Category.query().select('*');
       return response.status(200).json(categories);
     } catch (error) {
       return error;

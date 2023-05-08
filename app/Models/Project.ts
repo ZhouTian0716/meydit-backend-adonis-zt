@@ -74,7 +74,7 @@ export default class Project extends AppBaseModel {
   public images: HasMany<typeof Image>;
 
   @manyToMany(() => Tag, {
-    pivotTable: 'project_tag',
+    pivotTable: 'project_tags',
   })
   public tags: ManyToMany<typeof Tag>;
 }

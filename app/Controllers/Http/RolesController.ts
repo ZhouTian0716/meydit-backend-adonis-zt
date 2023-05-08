@@ -11,7 +11,7 @@ const payloadSchema = schema.create({
 export default class RolesController {
   public async index({ response }: HttpContextContract) {
     try {
-      const roles = await Role.query().preload('accounts').select('*');
+      const roles = await Role.query().select('*');
       return response.status(200).json(roles);
     } catch (error) {
       return error;

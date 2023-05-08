@@ -3,7 +3,6 @@ import Roles from 'App/Enums/Roles';
 import Project from 'App/Models/Project';
 import CreateProjectValidator from 'App/Validators/Project/CreateProjectValidator';
 import UpdateProjectValidator from 'App/Validators/Project/UpdateProjectValidator';
-import { schema, rules } from '@ioc:Adonis/Core/Validator';
 // import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
 
 export default class ProjectsController {

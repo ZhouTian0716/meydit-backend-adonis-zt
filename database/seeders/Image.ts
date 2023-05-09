@@ -38,7 +38,7 @@ export default class ImageSeeder extends BaseSeeder {
         projectId: 2,
       },
       {
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/project-images/id-3/000000000007.jpg',
+        url: 'https://meydit-media-storage-production.s3.ap-southeast-2.amazonaws.com/project-images/id-3/000000000007.jpg',
         fileName: 'project-images/id-3/000000000007.jpg',
         projectId: 3,
       },

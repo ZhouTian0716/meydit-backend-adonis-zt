@@ -43,6 +43,20 @@ export default class AccountSeeder extends BaseSeeder {
         lastName: 'Karl',
         password: 'Xiao0716!',
       },
+      {
+        email: 'maker@gmail.com',
+        roleId: 2,
+        firstName: 'Maker',
+        lastName: 'Lau',
+        password: 'Xiao0716!',
+      },
+      {
+        email: 'client@gmail.com',
+        roleId: 1,
+        firstName: 'Client',
+        lastName: 'Kidman',
+        password: 'Xiao0716!',
+      },
     ]);
   }
 }

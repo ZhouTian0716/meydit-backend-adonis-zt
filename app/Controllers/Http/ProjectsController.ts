@@ -41,9 +41,9 @@ export default class ProjectsController {
       });
 
       // Replace category object with its name property
-      serializedData.data.forEach((project) => {
-        project.category = project.category.name;
-      });
+      // serializedData.data.forEach((project) => {
+      //   project.category = project.category.name;
+      // });
 
       return response.status(200).json(serializedData);
     } catch (error) {
@@ -86,7 +86,7 @@ export default class ProjectsController {
       if (!project) return response.status(404).json({ message: 'Project not found' });
 
       // Exclude the `category` relation from the serialized data
-      const { category, ...serializedData } = project.serialize({
+      const serializedData = project.serialize({
         relations: {
           maker: {
             fields: {
@@ -106,13 +106,7 @@ export default class ProjectsController {
         },
       });
 
-      // Add the `category` field to the response object
-      const responseObj = {
-        ...serializedData,
-        category: category.name,
-      };
-
-      return response.json(responseObj);
+      return response.json(serializedData);
     } catch (error) {
       return error;
     }
@@ -146,6 +140,46 @@ export default class ProjectsController {
         return response.status(401).json({ message: 'Unauthorized' });
       await project.delete();
       response.status(200);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  public async filterByAccount({ request, response, params }: HttpContextContract) {
+    const perPage = parseInt(request.qs().perPage) || 10;
+    const page = parseInt(request.qs().page) || 1;
+    try {
+      const { accountId } = params;
+      const projects = await Project.query()
+        .preload('client')
+        .preload('maker')
+        .preload('category')
+        .preload('images')
+        .preload('tags')
+        .where('clientId', accountId)
+        .paginate(page, perPage);
+
+      const serializedData = projects.serialize({
+        relations: {
+          maker: {
+            fields: {
+              pick: ['firstName', 'lastName', 'email'],
+            },
+          },
+          client: {
+            fields: {
+              pick: ['firstName', 'lastName', 'email'],
+            },
+          },
+          images: {
+            fields: {
+              pick: ['url', 'fileName'],
+            },
+          },
+        },
+      });
+
+      return response.status(200).json(serializedData);
     } catch (error) {
       return error;
     }

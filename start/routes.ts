@@ -47,4 +47,5 @@ Route.group(() => {
   Route.post('/auth/logout', 'AuthController.logout').as('auth.logout');
   Route.get('/aws/s3/upload', 'AwsS3Controller.secureUrlForUpload');
   Route.get('/aws/s3/delete', 'AwsS3Controller.secureUrlForDelete');
+  Route.get('/accounts/:accountId/projects', 'ProjectsController.filterByAccount');
 }).prefix('api');

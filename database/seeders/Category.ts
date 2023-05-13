@@ -1,54 +1,56 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder';
 import Category from 'App/Models/Category';
+import Env from '@ioc:Adonis/Core/Env';
 
 export default class CategorySeeder extends BaseSeeder {
-  public static environment = ['development']
+  public static environment = ['development'];
   public async run() {
     const uniqueKey = 'name';
+    const bucketName = Env.get('AWS_S3_BUCKET');
     await Category.updateOrCreateMany(uniqueKey, [
       {
         name: 'General',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/General.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/General.png`,
       },
       {
         name: 'Dress',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Dress.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Dress.png`,
       },
       {
         name: 'Jacket',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Jacket.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Jacket.png`,
       },
       {
         name: 'Shirt',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Shirt.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Shirt.png`,
       },
       {
         name: 'Kids',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Kids.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Kids.png`,
       },
       {
         name: 'Sportswear',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Sportswear.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Sportswear.png`,
       },
       {
         name: 'Woman',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Woman.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Woman.png`,
       },
       {
         name: 'Man',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Man.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Man.png`,
       },
       {
         name: 'Accessories',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Accessories.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Accessories.png`,
       },
       {
         name: 'Hats',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Hats.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Hats.png`,
       },
       {
         name: 'Others',
-        url: 'https://meydit-media-storage.s3.ap-southeast-2.amazonaws.com/category-images/Others.png',
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/category-images/Others.png`,
       },
     ]);
   }

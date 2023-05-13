@@ -21,7 +21,6 @@
 import Route from '@ioc:Adonis/Core/Route';
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 
-
 // Healthcheck
 Route.get('/', ({ response }: HttpContextContract) => {
   response.status(200).json({ hello: 'api home' });
@@ -34,7 +33,9 @@ Route.get('/healthcheck', ({ response }: HttpContextContract) =>
 Route.group(() => {
   // Route.resource('projects', 'ProjectsController').paramFor('projects', 'slug').apiOnly();
   Route.resource('/accounts', 'AccountsController').apiOnly();
-  Route.resource('/profiles', 'ProfilesController').apiOnly();  
+  Route.resource('/profiles', 'ProfilesController')
+    .middleware({ update: ['auth'], destroy: ['auth'] })
+    .apiOnly();
   Route.resource('/categories', 'CategoriesController').apiOnly();
   Route.resource('/statuses', 'StatusesController').apiOnly();
   Route.resource('/roles', 'RolesController').apiOnly();
@@ -42,10 +43,10 @@ Route.group(() => {
   Route.resource('/projects', 'ProjectsController')
     .middleware({ store: ['auth'], update: ['auth'], destroy: ['auth'] })
     .apiOnly();
-  Route.resource('/images', 'ImagesController').apiOnly();  
+  Route.resource('/images', 'ImagesController').apiOnly();
   Route.post('/auth/login', 'AuthController.login').as('auth.login');
   Route.post('/auth/logout', 'AuthController.logout').as('auth.logout');
-  Route.get('/aws/s3/upload', 'AwsS3Controller.secureUrlForUpload');
-  Route.get('/aws/s3/delete', 'AwsS3Controller.secureUrlForDelete');
+  Route.get('/aws/s3/upload', 'AwsS3Controller.secureUrlForUpload').middleware('auth');
+  Route.get('/aws/s3/delete', 'AwsS3Controller.secureUrlForDelete').middleware('auth');
   Route.get('/accounts/:accountId/projects', 'ProjectsController.filterByAccount');
 }).prefix('api');

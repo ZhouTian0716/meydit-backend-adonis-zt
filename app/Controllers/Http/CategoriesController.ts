@@ -6,6 +6,9 @@ const payloadSchema = schema.create({
   name: schema.string({ trim: true }, [
     rules.unique({ table: 'categories', column: 'name', caseInsensitive: true }),
   ]),
+  url: schema.string({ trim: true },[
+    rules.unique({ table: 'categories', column: 'url', caseInsensitive: true }),
+  ]),
 });
 
 export default class CategoriesController {

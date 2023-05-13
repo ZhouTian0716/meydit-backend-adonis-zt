@@ -8,6 +8,9 @@ export default class Category extends AppBaseModel {
   @column()
   public name: string;
 
+  @column()
+  public url: string;
+
   @hasMany(() => Project, { foreignKey: 'categoryId' })
   public projects: HasMany<typeof Project>;
 }

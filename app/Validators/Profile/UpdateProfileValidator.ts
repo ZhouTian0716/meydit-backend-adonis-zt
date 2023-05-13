@@ -5,9 +5,8 @@ export default class CreateProfileValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    avatar: schema.string({ trim: true }),
+    avatar: schema.string.nullableAndOptional({ trim: true }),
     bio: schema.string.nullableAndOptional({ trim: true }),
-    accountId: schema.number(),
   });
 
   // ZT-NOTE: REFER TO https://docs.adonisjs.com/guides/validator/custom-messages

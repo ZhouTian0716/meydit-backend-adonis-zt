@@ -3,6 +3,7 @@ import Account from 'App/Models/Account';
 import Hash from '@ioc:Adonis/Core/Hash';
 import CreateAccountValidator from 'App/Validators/Account/CreateAccountValidator';
 import UpdateAccountValidator from 'App/Validators/Account/UpdateAccountValidator';
+import { defaultProfile } from './ProfilesController';
 
 export default class AccountsController {
   public async index({ response }: HttpContextContract) {
@@ -19,6 +20,9 @@ export default class AccountsController {
     try {
       const payload = await request.validate(CreateAccountValidator);
       const res = await Account.create({ ...payload });
+      const parentAccount = await Account.findBy('id', res.id);
+      if(!parentAccount) return response.status(404).json({ message: 'Account not found' });
+      await parentAccount?.related('profile').create({ ...defaultProfile });
       response.status(201);
       return res;
     } catch (error: any) {
@@ -38,7 +42,6 @@ export default class AccountsController {
       if (accountRole === 'Client') {
         const account = await Account.query()
           .preload('role')
-          .preload('projects')
           .preload('profile')
           .where('id', id)
           .first();

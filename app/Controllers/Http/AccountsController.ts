@@ -8,8 +8,11 @@ import { defaultProfile } from './ProfilesController';
 export default class AccountsController {
   public async index({ response }: HttpContextContract) {
     try {
-      const accounts = await Account.query().preload('role').select('*');
-      // const res = accounts.map((project) => project.serialize({ fields: ['id', 'email'] }));
+      const accounts = await Account.query()
+        .preload('role')
+        .preload('profile', (query) => {
+          query.select('id', 'bio', 'avatar');
+        });
       return response.status(200).json(accounts);
     } catch (error) {
       return error;
@@ -21,7 +24,7 @@ export default class AccountsController {
       const payload = await request.validate(CreateAccountValidator);
       const res = await Account.create({ ...payload });
       const parentAccount = await Account.findBy('id', res.id);
-      if(!parentAccount) return response.status(404).json({ message: 'Account not found' });
+      if (!parentAccount) return response.status(404).json({ message: 'Account not found' });
       await parentAccount?.related('profile').create({ ...defaultProfile });
       response.status(201);
       return res;

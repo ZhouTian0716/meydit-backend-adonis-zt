@@ -41,6 +41,7 @@ Route.group(() => {
   Route.resource('/roles', 'RolesController').apiOnly();
   Route.resource('/tags', 'TagsController').apiOnly();
   Route.resource('/projects', 'ProjectsController')
+    .paramFor('projects', 'slug')
     .middleware({ store: ['auth'], update: ['auth'], destroy: ['auth'] })
     .apiOnly();
   Route.resource('/images', 'ImagesController').apiOnly();

@@ -73,7 +73,7 @@ export default class ProjectsController {
 
   public async show({ response, params }: HttpContextContract) {
     try {
-      const { id } = params;
+      const { slug } = params;
       const project = await Project.query()
         .preload('client')
         .preload('maker')
@@ -81,7 +81,7 @@ export default class ProjectsController {
         .preload('status')
         .preload('images')
         .preload('tags')
-        .where('id', id)
+        .where('slug', slug)
         .first();
       if (!project) return response.status(404).json({ message: 'Project not found' });
 
@@ -100,7 +100,7 @@ export default class ProjectsController {
           },
           images: {
             fields: {
-              pick: ['url', 'fileName'],
+              pick: ['id', 'url', 'fileName'],
             },
           },
         },

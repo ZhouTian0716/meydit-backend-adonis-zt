@@ -35,7 +35,7 @@ export default class ImageSeeder extends BaseSeeder {
         projectId: 2,
       },
       {
-        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/project-images/id-2/000000000006.jpg`
+        url: `https://${bucketName}.s3.ap-southeast-2.amazonaws.com/project-images/id-2/000000000006.jpg`,
         fileName: 'project-images/id-2/000000000006.jpg',
         projectId: 2,
       },

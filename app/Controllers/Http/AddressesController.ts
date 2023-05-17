@@ -83,7 +83,7 @@ export default class AddressesController {
   public async destroy({ response, params, auth }: HttpContextContract) {
     try {
       const { id } = params;
-      const address = await Address.query().where('id', id).first();
+      const address = await Address.findBy('id', id);
       if (!address) return response.status(404).json({ message: 'Address not found' });
       const authUserId = auth.user?.$original.id;
       if (address.$original.accountId !== authUserId)

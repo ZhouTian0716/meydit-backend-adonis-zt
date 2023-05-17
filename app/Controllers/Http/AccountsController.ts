@@ -4,6 +4,7 @@ import Hash from '@ioc:Adonis/Core/Hash';
 import CreateAccountValidator from 'App/Validators/Account/CreateAccountValidator';
 import UpdateAccountValidator from 'App/Validators/Account/UpdateAccountValidator';
 import { defaultProfile } from './ProfilesController';
+import { defaultAddress } from './AddressesController';
 
 export default class AccountsController {
   public async index({ response }: HttpContextContract) {
@@ -25,7 +26,9 @@ export default class AccountsController {
       const res = await Account.create({ ...payload });
       const parentAccount = await Account.findBy('id', res.id);
       if (!parentAccount) return response.status(404).json({ message: 'Account not found' });
+      // ZT-NOTE:给account创建时候各关联对象的默认值
       await parentAccount?.related('profile').create({ ...defaultProfile });
+      await parentAccount?.related('addresses').createMany([{ ...defaultAddress }]);
       response.status(201);
       return res;
     } catch (error: any) {
@@ -46,6 +49,7 @@ export default class AccountsController {
         const account = await Account.query()
           .preload('role')
           .preload('profile')
+          .preload('addresses')
           .where('id', id)
           .first();
         if (!account) return response.status(404).json({ message: 'Account not found' });
@@ -54,6 +58,7 @@ export default class AccountsController {
         const account = await Account.query()
           .preload('role')
           .preload('profile')
+          .preload('addresses')
           .where('id', id)
           .first();
         if (!account) return response.status(404).json({ message: 'Account not found' });
@@ -64,9 +69,14 @@ export default class AccountsController {
     }
   }
 
-  public async update({ request, response, params }: HttpContextContract) {
+  public async update({ request, response, params, auth }: HttpContextContract) {
     try {
       const { id } = params;
+      const account = await Account.findBy('id', id);
+      if (!account) return response.status(404).json({ message: 'Account not found' });
+      const authUserId = auth.user?.$original.id;
+      if (parseInt(id) !== authUserId)
+        return response.status(401).json({ message: 'Unauthorized' });
       const payload = await request.validate(UpdateAccountValidator);
       if (payload.password) {
         payload.password = await Hash.make(payload.password);
@@ -80,13 +90,15 @@ export default class AccountsController {
     }
   }
 
-  public async destroy({ response, params }: HttpContextContract) {
+  public async destroy({ response, params, auth }: HttpContextContract) {
     try {
       const { id } = params;
       const account = await Account.findBy('id', id);
-      if (account) {
-        await account.delete();
-      }
+      if (!account) return response.status(404).json({ message: 'Account not found' });
+      const authUserId = auth.user?.$original.id;
+      if (parseInt(id) !== authUserId)
+        return response.status(401).json({ message: 'Unauthorized' });
+      await account.delete();
       response.status(200);
     } catch (error) {
       return error;

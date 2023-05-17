@@ -10,6 +10,7 @@ export default class CreateImageValidator {
     ]),
     fileName: schema.string(),
     projectId: schema.number(),
+    isProjectCover: schema.boolean.optional(),
   });
 
   public messages: CustomMessages = {};

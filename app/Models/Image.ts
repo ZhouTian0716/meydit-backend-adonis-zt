@@ -16,6 +16,9 @@ export default class Image extends AppBaseModel {
   @column({ serializeAs: null })
   public projectId: number;
 
+  @column()
+  public isProjectCover: boolean;
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

@@ -100,7 +100,7 @@ export default class ProjectsController {
           },
           images: {
             fields: {
-              pick: ['id', 'url', 'fileName'],
+              pick: ['id', 'url', 'fileName', 'isProjectCover'],
             },
           },
         },

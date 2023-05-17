@@ -9,6 +9,7 @@ export default class Images extends BaseSchema {
       table.string('url').notNullable().unique();
       table.string('file_name').notNullable();
       table.integer('project_id').nullable().unsigned().references('projects.id').onDelete('CASCADE');
+      table.boolean('is_project_cover').notNullable().defaultTo(false);
       table.timestamp('created_at', { useTz: true }).notNullable();
     })
   }

@@ -49,7 +49,9 @@ Route.group(() => {
     .paramFor('projects', 'slug')
     .middleware({ store: ['auth'], update: ['auth'], destroy: ['auth'] })
     .apiOnly();
-  Route.resource('/images', 'ImagesController').apiOnly();
+  Route.resource('/images', 'ImagesController')
+    .middleware({ update: ['auth'], destroy: ['auth'] })
+    .apiOnly();
   Route.post('/auth/login', 'AuthController.login').as('auth.login');
   Route.post('/auth/logout', 'AuthController.logout').as('auth.logout');
   Route.get('/aws/s3/upload', 'AwsS3Controller.secureUrlForUpload').middleware('auth');

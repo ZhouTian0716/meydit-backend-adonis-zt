@@ -12,7 +12,7 @@ export default class AddressesController {
       return error;
     }
   }
-  
+
   public async show({ response, params }: HttpContextContract) {
     try {
       const { id } = params;
@@ -29,19 +29,23 @@ export default class AddressesController {
       const authUserId = auth.user?.$original.id;
       const payload = await request.validate(CreateAddressValidator);
       // ZT-NOTE: 这个是feature，创建的时候伴随修改，update方法里面也有考虑到
-      // Check if user wants to create a primary address.
+      // Check if user wants to set this address as primary
       if (payload.isPrimary) {
-        const primaryAddress = await Address.query().where('isPrimary', true).first();
-        if (primaryAddress) {
-          await Address.query().where('id', primaryAddress.id).update({ isPrimary: false });
+        const oldPrimaryAddress = await Address.query()
+          .where((query) => {
+            query.where('accountId', authUserId).where('isPrimary', true);
+          })
+          .first();
+        if (oldPrimaryAddress) {
+          await Address.query().where('id', oldPrimaryAddress.id).update({ isPrimary: false });
         }
       }
       // ZT-NOTE: 一对多的关系created，在创建address的时候
       const address = await auth
         .user!.related('addresses')
         .create({ ...payload, accountId: authUserId });
-        // ZT-NOTE: 如果想要给返回值populate上parent，可以这样写
-        // address.$setRelated('account', auth.user!);
+      // ZT-NOTE: 如果想要给返回值populate上parent，可以这样写
+      // address.$setRelated('account', auth.user!);
       return response.status(201).json(address);
     } catch (error) {
       return error;
@@ -59,9 +63,13 @@ export default class AddressesController {
         return response.status(401).json({ message: 'Unauthorized' });
       const payload = await request.validate(UpdateAddressValidator);
       if (payload.isPrimary) {
-        const primaryAddress = await Address.query().where('isPrimary', true).first();
-        if (primaryAddress) {
-          await Address.query().where('id', primaryAddress.id).update({ isPrimary: false });
+        const oldPrimaryAddress = await Address.query()
+          .where((query) => {
+            query.where('accountId', authUserId).where('isPrimary', true);
+          })
+          .first();
+        if (oldPrimaryAddress) {
+          await Address.query().where('id', oldPrimaryAddress.id).update({ isPrimary: false });
         }
       }
       await Address.query().where('id', id).update(payload);

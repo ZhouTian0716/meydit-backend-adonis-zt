@@ -5,6 +5,7 @@ import { column, beforeSave, hasMany, HasMany, belongsTo, BelongsTo, HasOne, has
 import Project from './Project';
 import Role from './Role';
 import Profile from './Profile';
+import Address from './Address';
 
 export default class Account extends AppBaseModel {
   @column({ isPrimary: true })
@@ -48,6 +49,9 @@ export default class Account extends AppBaseModel {
   // 否则默认是accountId
   @hasOne(() => Profile, { foreignKey: 'accountId' })
   public profile: HasOne<typeof Profile>;
+
+  @hasMany(() => Address, { foreignKey: 'accountId' })
+  public addresses: HasMany<typeof Address>;
 
   @hasMany(() => Project, { foreignKey: 'clientId' })
   public projects: HasMany<typeof Project>;

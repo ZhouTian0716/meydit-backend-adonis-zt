@@ -9,6 +9,7 @@ export default class AuthController {
       const account = await Account.query()
         .preload('role')
         .preload('profile')
+        .preload('addresses')
         .where('email', email)
         .first();
       if (!account) {
@@ -24,6 +25,7 @@ export default class AuthController {
         token: token.toJSON(),
       };
       // The expiresIn, think about adding feature to refresh token
+      // ZT-NOTE:这里登录后的返回值是配合前端redux的
       return loginRes;
     } catch {
       response.unauthorized({ message: 'Invalid credentials' });

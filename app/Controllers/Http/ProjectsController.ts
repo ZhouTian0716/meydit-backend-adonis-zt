@@ -62,12 +62,10 @@ export default class ProjectsController {
 
     const payload = await request.validate(CreateProjectValidator);
     const { tagIds, ...rest } = payload;
+    // 下面的附着都是仅为了检查？关系已经定位好了，不需要再次附着
     const project = await auth.user!.related('projects').create({ ...rest });
-
     project.$setRelated('account', auth.user!);
-
     tagIds && (await project.related('tags').attach(tagIds));
-
     response.status(201).json(project);
   }
 
@@ -75,11 +73,20 @@ export default class ProjectsController {
     try {
       const { slug } = params;
       const project = await Project.query()
-        .preload('client')
-        .preload('maker')
+        .preload('client', (query) => {
+          query.preload('profile').preload('addresses');
+        })
+        .preload('maker', (query) => {
+          query.preload('profile').preload('addresses');
+        })
         .preload('category')
         .preload('status')
         .preload('images')
+        .preload('bids', (query) => {
+          query.preload('maker', (query) => {
+            query.preload('profile').preload('addresses');
+          });
+        })
         .preload('tags')
         .where('slug', slug)
         .first();

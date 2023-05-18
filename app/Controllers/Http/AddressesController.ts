@@ -30,6 +30,7 @@ export default class AddressesController {
       const payload = await request.validate(CreateAddressValidator);
       // ZT-NOTE: 这个是feature，创建的时候伴随修改，update方法里面也有考虑到
       // Check if user wants to set this address as primary
+      console.log(payload);
       if (payload.isPrimary) {
         const oldPrimaryAddress = await Address.query()
           .where((query) => {
@@ -62,6 +63,7 @@ export default class AddressesController {
       if (address.$original.accountId !== authUserId)
         return response.status(401).json({ message: 'Unauthorized' });
       const payload = await request.validate(UpdateAddressValidator);
+      if (!payload) return response.status(400).json({ message: 'your payload is empty' });
       if (payload.isPrimary) {
         const oldPrimaryAddress = await Address.query()
           .where((query) => {
@@ -83,7 +85,7 @@ export default class AddressesController {
   public async destroy({ response, params, auth }: HttpContextContract) {
     try {
       const { id } = params;
-      const address = await Address.query().where('id', id).first();
+      const address = await Address.findBy('id', id);
       if (!address) return response.status(404).json({ message: 'Address not found' });
       const authUserId = auth.user?.$original.id;
       if (address.$original.accountId !== authUserId)

@@ -28,5 +28,6 @@ export default class IndexSeeder extends BaseSeeder {
     await this.runSeeder(await import('../Project'));
     await this.runSeeder(await import('../Image'));
     await this.runSeeder(await import('../Project_Tag'));
+    await this.runSeeder(await import('../Bids'));
   }
 }

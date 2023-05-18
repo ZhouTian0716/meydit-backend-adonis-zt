@@ -73,8 +73,12 @@ export default class ProjectsController {
     try {
       const { slug } = params;
       const project = await Project.query()
-        .preload('client')
-        .preload('maker')
+        .preload('client', (query) => {
+          query.preload('profile').preload('addresses');
+        })
+        .preload('maker', (query) => {
+          query.preload('profile').preload('addresses');
+        })
         .preload('category')
         .preload('status')
         .preload('images')

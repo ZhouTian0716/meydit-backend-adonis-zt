@@ -17,7 +17,7 @@ export default class Projects extends BaseSchema {
         .references('statuses.id')
         .onDelete('CASCADE')
         .defaultTo(1);
-      table.integer('maker_id').nullable().unsigned().references('accounts.id');
+      table.integer('maker_id').nullable().unsigned().references('accounts.id').defaultTo(null);
       table
         .integer('client_id')
         .notNullable()

@@ -6,7 +6,7 @@ export default class UpdateAccountValidator {
 
   // ZT-NOTE: 测试过，如果insomnia传了email（多余的field），这里也能过，但是数据库不会更新email（多余的field）
   public schema = schema.create({
-    password: schema.string({ trim: true }, [
+    password: schema.string.nullableAndOptional({ trim: true }, [
       rules.confirmed(),
       rules.minLength(8),
       rules.maxLength(20),
@@ -28,6 +28,7 @@ export default class UpdateAccountValidator {
 
   public messages: CustomMessages = {
     'required': '{{ field }} is required',
+    'alpha': '{{ field }} must contain only letters (a-zA-Z)',
     'password.confirmed': 'Password confirmation does not match',
     'password.minLength': 'Password must be at least {{ options.minLength }} characters',
     'password.maxLength': 'Password not more than {{ options.maxLength }} characters',

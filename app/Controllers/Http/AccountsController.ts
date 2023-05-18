@@ -86,7 +86,7 @@ export default class AccountsController {
         .update({ ...payload, password: payload.password });
       response.status(204);
     } catch (error) {
-      return error;
+      response.badRequest(error.messages.errors);
     }
   }
 

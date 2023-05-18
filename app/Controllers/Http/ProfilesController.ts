@@ -3,6 +3,15 @@ import Profile from 'App/Models/Profile';
 import UpdateProfileValidator from 'App/Validators/Profile/UpdateProfileValidator';
 
 export default class ProfilesController {
+  public async index({ response }: HttpContextContract) {
+    try {
+      const profiles = await Profile.query().select('*');
+      return response.status(200).json(profiles);
+    } catch (error) {
+      return error;
+    }
+  }
+
   public async show({ response, params }: HttpContextContract) {
     try {
       const { id } = params;

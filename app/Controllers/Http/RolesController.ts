@@ -46,8 +46,9 @@ export default class RolesController {
       const { id } = params;
       const payload = await request.validate({ schema: payloadSchema });
       if (!payload.name) return;
-      const res = await Role.query().where('id', id).update({ name: payload.name });
-      return response.status(204).json(res);
+      await Role.query().where('id', id).update({ name: payload.name });
+      const updated = await Role.findByOrFail('id', id);
+      return response.status(200).json(updated);
     } catch (error) {
       return error;
     }

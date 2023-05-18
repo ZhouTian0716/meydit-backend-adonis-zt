@@ -1,16 +1,14 @@
 import { schema, CustomMessages, rules } from '@ioc:Adonis/Core/Validator';
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 
-export default class CreateImageValidator {
+export default class CreateBidValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    url: schema.string({ trim: true },[
-      rules.unique({ table: 'images', column: 'url', caseInsensitive: true }),
-    ]),
-    fileName: schema.string(),
+    comment: schema.string({ trim: true }, [rules.minLength(2), rules.maxLength(200)]),
+    price: schema.number(),
     projectId: schema.number(),
-    isProjectCover: schema.boolean.optional(),
+    makerId: schema.number(),
   });
 
   public messages: CustomMessages = {};

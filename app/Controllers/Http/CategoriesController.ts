@@ -50,8 +50,9 @@ export default class CategoriesController {
       const { id } = params;
       const payload = await request.validate({ schema: payloadSchema });
       if (!payload.name) return;
-      const res = await Category.query().where('id', id).update({ name: payload.name });
-      return response.status(204).json(res);
+      await Category.query().where('id', id).update({ name: payload.name });
+      const updated = await Category.findByOrFail('id', id);
+      return response.status(200).json(updated);
     } catch (error) {
       return error;
     }

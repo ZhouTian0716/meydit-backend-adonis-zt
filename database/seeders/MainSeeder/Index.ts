@@ -21,11 +21,13 @@ export default class IndexSeeder extends BaseSeeder {
     await this.runSeeder(await import('../Role'));
     await this.runSeeder(await import('../Account'));
     await this.runSeeder(await import('../Profile'));
+    await this.runSeeder(await import('../Address'));
     await this.runSeeder(await import('../Status'));
     await this.runSeeder(await import('../Category'));
     await this.runSeeder(await import('../Tag'));
     await this.runSeeder(await import('../Project'));
     await this.runSeeder(await import('../Image'));
     await this.runSeeder(await import('../Project_Tag'));
+    await this.runSeeder(await import('../Bids'));
   }
 }

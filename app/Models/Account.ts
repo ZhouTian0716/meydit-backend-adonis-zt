@@ -3,8 +3,10 @@ import { DateTime } from 'luxon';
 import Hash from '@ioc:Adonis/Core/Hash';
 import { column, beforeSave, hasMany, HasMany, belongsTo, BelongsTo, HasOne, hasOne } from '@ioc:Adonis/Lucid/Orm';
 import Project from './Project';
+import Bid from './Bid';
 import Role from './Role';
 import Profile from './Profile';
+import Address from './Address';
 
 export default class Account extends AppBaseModel {
   @column({ isPrimary: true })
@@ -49,8 +51,14 @@ export default class Account extends AppBaseModel {
   @hasOne(() => Profile, { foreignKey: 'accountId' })
   public profile: HasOne<typeof Profile>;
 
+  @hasMany(() => Address, { foreignKey: 'accountId' })
+  public addresses: HasMany<typeof Address>;
+
   @hasMany(() => Project, { foreignKey: 'clientId' })
   public projects: HasMany<typeof Project>;
+
+  @hasMany(() => Bid, { foreignKey: 'makerId' })
+  public bids: HasMany<typeof Bid>;
 
   @belongsTo(() => Role, { foreignKey: 'roleId' })
   public role: BelongsTo<typeof Role>;

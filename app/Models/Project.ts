@@ -14,6 +14,7 @@ import Account from './Account';
 import Category from './Category';
 import Status from './Status';
 import Image from './Image';
+import Bid from './Bid';
 import Tag from './Tag';
 
 export default class Project extends AppBaseModel {
@@ -72,6 +73,9 @@ export default class Project extends AppBaseModel {
 
   @hasMany(() => Image, { foreignKey: 'projectId' })
   public images: HasMany<typeof Image>;
+
+  @hasMany(() => Bid, { foreignKey: 'projectId' })
+  public bids: HasMany<typeof Bid>;
 
   @manyToMany(() => Tag, {
     pivotTable: 'project_tags',

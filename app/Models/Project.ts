@@ -23,7 +23,7 @@ export default class Project extends AppBaseModel {
 
   @column()
   @slugify({
-    strategy: 'dbIncrement',
+    strategy: 'shortId',
     fields: ['title'],
     allowUpdates: false,
   })

@@ -6,14 +6,19 @@ export default class UpdateProjectValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    title: schema.string.nullableAndOptional({ trim: true }, [
-      rules.minLength(2),
+    title: schema.string.optional({ trim: true }, [
+      rules.minLength(3),
       rules.maxLength(50),
     ]),
-    description: schema.string.nullableAndOptional({ trim: true }),
-    statusId: schema.enum.nullableAndOptional([1, 2, 3] as const),
-    startPrice: schema.number(),
+    description: schema.string.optional({ trim: true }),
+    statusId: schema.enum.optional([1, 2, 3] as const),
+    makerId: schema.number.optional(),
+    categoryId: schema.number.optional(),
+    startPrice: schema.number.optional(),
   });
 
-  public messages: CustomMessages = {};
+  public messages: CustomMessages = {
+    'title.minLength': 'Title must be at least {{ options.minLength }} characters',
+    'title.maxLength': 'Title no more than {{ options.maxLength }} characters',
+  };
 }

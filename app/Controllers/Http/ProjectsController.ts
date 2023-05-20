@@ -121,17 +121,18 @@ export default class ProjectsController {
 
   public async update({ request, response, params, auth }: HttpContextContract) {
     try {
-      const { id } = params;
-      const project = await Project.query().where('id', id).first();
+      const { slug } = params;
+      const project = await Project.query().where('slug', slug).first();
       if (!project) return response.status(404).json({ message: 'Project not found' });
       const authUserId = auth.user?.$original.id;
       if (project.$original.clientId !== authUserId)
         return response.status(401).json({ message: 'Unauthorized' });
       const payload = await request.validate(UpdateProjectValidator);
-      await Project.query().where('id', id).update(payload);
-      return response.status(204);
+      await Project.query().where('slug', slug).update(payload);
+      const updated = await Project.findByOrFail('slug', slug);
+      return response.status(200).json(updated);
     } catch (error) {
-      return error;
+      return response.badRequest(error.messages.errors);
     }
   }
 

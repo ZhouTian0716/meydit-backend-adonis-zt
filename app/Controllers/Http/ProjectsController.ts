@@ -34,7 +34,7 @@ export default class ProjectsController {
           },
           images: {
             fields: {
-              pick: ['url', 'fileName'],
+              pick: ['id', 'url', 'fileName', 'isProjectCover','projectId'],
             },
           },
         },
@@ -107,7 +107,7 @@ export default class ProjectsController {
           },
           images: {
             fields: {
-              pick: ['id', 'url', 'fileName', 'isProjectCover'],
+              pick: ['id', 'url', 'fileName', 'isProjectCover','projectId'],
             },
           },
         },
@@ -181,7 +181,7 @@ export default class ProjectsController {
           },
           images: {
             fields: {
-              pick: ['url', 'fileName'],
+              pick: ['url', 'fileName', 'isProjectCover'],
             },
           },
         },

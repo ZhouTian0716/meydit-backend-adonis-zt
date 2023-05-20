@@ -13,7 +13,7 @@ export default class Image extends AppBaseModel {
   @column()
   public fileName: string;
 
-  @column({ serializeAs: null })
+  @column()
   public projectId: number;
 
   @column()

@@ -98,11 +98,10 @@ export default class AddressesController {
 }
 
 export const defaultAddress = {
-  number: '',
-  route: '',
-  city: '',
-  state: '',
-  zip: '',
-  country: '',
-  isPrimary: true,
+  number: null,
+  route: null,
+  city: null,
+  state: null,
+  zip: null,
+  country: null,
 };
